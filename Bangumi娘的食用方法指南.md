@@ -9,7 +9,7 @@ Bangumi娘的食用指南
 
 #### 简介
 
-Bangumi娘是基于 CoolQ HTTP API 以及 Bangumi API 通过PHP及SQL实现的
+Bangumi娘是基于 <a href="https://github.com/richardchien/coolq-http-api" target="_blank">CoolQ HTTP API</a> 以及 <a href="https://github.com/bangumi/api" target="_blank">Bangumi API</a> 通过PHP及SQL实现的
 
 #### 用途
 
