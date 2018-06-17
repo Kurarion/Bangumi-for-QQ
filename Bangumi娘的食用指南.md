@@ -1,4 +1,3 @@
-﻿
 Bangumi娘的食用指南
 ===================
 
@@ -9,7 +8,10 @@ Bangumi娘的食用指南
 
 #### 简介
 
-Bangumi娘是基于 <a href="https://github.com/richardchien/coolq-http-api" target="_blank">CoolQ HTTP API</a> 以及 <a href="https://github.com/bangumi/api" target="_blank">Bangumi API</a> 通过PHP及SQL实现的
+Bangumi娘是基于 [CoolQ HTTP API](https://github.com/richardchien/coolq-http-api)
+以及 [Bangumi API](https://github.com/bangumi/api) 通过PHP及SQL实现的
+
+网页说明文档: [Bangumi娘的食用指南](http://www.irisu.cc/bangumi/)
 
 #### 用途
 
@@ -183,7 +185,7 @@ Bangumi娘QQ号：1243000303
 
 1.\~search 可用 \~se 代替
 
-2. 条目的类型的对应编号: 输入1即代表只搜索书籍
+1.  条目的类型的对应编号: 输入1即代表只搜索书籍
 
 array(
 
@@ -224,7 +226,7 @@ array(
 
 1.\~ subject 可用 \~su 代替
 
-2. 条目信息的详细度参数: 输入\* 即代表额外回复条目角色
+1.  条目信息的详细度参数: 输入\* 即代表额外回复条目角色
 
 array(
 
@@ -236,7 +238,7 @@ array(
 
 );
 
-3. 例如\#10，如果这个位置没有存过ID是不会给出条目信息的
+1.  例如\#10，如果这个位置没有存过ID是不会给出条目信息的
 
 **用途**:
 用于搜索指定条目详细信息，此外如果用户已经注册(\~reg)，则会返回用户对此条目的收藏情况
@@ -289,7 +291,7 @@ array(
 
 1.\~save 可用 \~sa 代替
 
-2. 请确保\<参数2\>是1-25内的一个数字，当然凡是使用\#都要确保的，否则
+1.  请确保\<参数2\>是1-25内的一个数字，当然凡是使用\#都要确保的，否则
 
 ![](media/c23a5de148b2fa897a382274ae704829.png)
 
@@ -422,9 +424,9 @@ array(
 
 **说明**:
 
-1. 无参数
+1.  无参数
 
-2. 这条指令仅限私聊，涉及到保密，请不要将链接随便外放
+2.  这条指令仅限私聊，涉及到保密，请不要将链接随便外放
 
 ![](media/c8929327ccb1a52bf22e2cb59544fd8a.png)
 
@@ -465,3 +467,164 @@ array(
 ![](media/872326ae6ea4ebd8ed017bb52a941e2f.png)
 
 ![](media/6e763705cf4a2fc9fddb9f3fd815d4ac.png)
+
+使用流程示例
+------------
+
+### 注册
+
+发送\~reg进行注册
+
+![](media/e4d9dbc9ce6b3dae5a3ebbd7926dc048.png)
+
+点击链接跳转授权页面（确保Bangumi已经处于登陆状态）
+
+![](media/914d2774ff1de44f97d0eb8ec6a9f5aa.png)
+
+点击授权（页面会跳转），成功的话会看到下面这种情况
+
+![](media/905dcfa06ed6ac81ee0fea9fe331fa57.png)
+
+同时Bangumi娘也会进行回复
+
+![](media/ac505777c71ea039838a9424174868ad.png)
+
+到此便已经完成了注册，当您再次\~reg打开链接或者打开之前的链接即重新reg则会刷新权限信息
+
+![](media/7aab1c496126a773b725101edd346e73.png)
+
+成功刷新授权信息则会看到
+
+![](media/b3e23f97987d9663a4549db38f9087da.png)
+
+至此完成注册
+
+### 搜索
+
+找到想要看的番组可以使用\~se搜索关键字或者\~bgm查看每天放松表从而进行收藏操作或者save
+
+使用\~search搜索
+
+![](media/a3a74ba9445dd0b04c57714d075a5b5f.png)
+
+![](media/147a49a1a707e43215848789ddd280d9.png)
+
+可以找到条目的ID，比如上面的218711即为DARLING in the FRANXX的条目ID
+
+使用\~bgm搜索
+
+![](media/d0ceadc105ad9ba557d635596ea9aa9f.png)
+
+![](media/9fb347ab39ce9a206edc21b466be6d50.png)
+
+可以得知海贼王的ID为975
+
+### 查询
+
+当有了条目ID以后，也许你想查看更加详细的条目资料
+
+请使用\~subject
+
+例如刚才搜索的DARLING in the FRANXX（ID: 218711）
+
+![](media/c906ff4eb94e9c483de1787430a7c637.png)
+
+![](media/7da6c19c2a29845c00b70dbe5e3e3f93.png)
+
+![](media/c43dd4181d4da5f67c675218e4d620b9.png)
+
+当然你也可以使用额外的参数从而查看角色信息等，具体查看之前的\~subject指令说明
+
+由于您已经注册了(reg)，那么你可以使用省略条目ID参数的魔法，就在刚才我们搜索了
+
+DARLING in the FRANXX（ID:
+218711）那么在您下次使用\~subject之前，条目ID就默认是218711了
+
+**注意**：当使用某些指令(up,co)的\*参数时会自动请求一次\~subject也就是说会更改默认ID为当前subject
+的ID
+
+例如
+
+![](media/a1d0258242cb5dc67f6cb021b1941059.png)
+
+### 收藏
+
+我们已经可以使用省略条目ID了，那么接下来我们操作更加轻松
+
+就在刚才我们使用\~subject查看DARLING in the
+FRANXX的资料时，我们看到最后一行显示了
+
+\<未收藏\>
+这是因为我这个Bangumi账号还未标记过这部番，如果您之前已经收藏过则可以免去这个步骤
+
+使用\~co指令将其标记为在看
+
+![](media/6506bafb7726f39a0650d4f4b0855612.png)
+
+![](media/dc7a139696d58fa1990001b3dffa7d3a.png)
+
+嗯，接下来就能更新了
+
+除此之外，您也可以标记为看完等等其他状态，也能附加评分和吐槽，具体请查看指令说明
+
+比如我看完了条目175603
+
+则可以这样
+
+![](media/129a7b741298695ec686e95c400718e3.png)
+
+![](media/3b053f2276059df0c015889c2b2553b4.png)
+
+### 保存和取出
+
+当您可以同时观看多部番，\~save是一个不错的选择，最多25个位置您可以放常用的条目ID以便使用
+
+就比如我将DARLING in the FRANXX放到吉祥物1号位
+
+将七大罪 圣战的预兆放到吉祥物2号位
+
+![](media/888ae2ea600e47b1a3c40101bc6a57d1.png)
+
+能省略ID是因为就在上一个步骤最后我搜索了七大罪 圣战的预兆
+
+![](media/24801605144a6ab64901276aae00b021.png)
+
+那么使用吉祥物吧
+
+通过\~list能查看当前存储的所有ID，也能单独获取，详情请看指令说明
+
+![](media/037eb31fbb0ae3871f963c7a6ab69971.png)
+
+![](media/e82e24b74ec7ac358a1178efe269daa6.png)
+
+![](media/9a0e158f60ba6a7982b264c08225afb1.png)
+
+然后我发现七大罪这个收藏错状态了，我就能使用\~co直接使用\#操作
+
+![](media/c35863388c9bf4e10545bd2ba299ffa7.png)
+
+![](media/43c1c0acb34dcb261be6bb722112ee22.png)
+
+同样的，凡是相关条目ID的指令都能使用\#直接使用吉祥物中存储的ID
+
+### 更新
+
+当您已经收藏了某部番，需要更新其进度，则需要使用\~up指令
+
+还拿之前的DARLING in the FRANXX例子做示范，比如我看完了21集
+
+就可以像下面这样（上次搜索为DARLING in the FRANXX）
+
+![](media/80d9b4c4cece1be2676c3687d2ae2cfe.png)
+
+![](media/9ac1f43b4079c8c218cb7b57788cddc1.png)
+
+嗯，的确起到作用了
+
+### 注销
+
+也许你遇到了不可解决的账号问题，又或者你真的不想再利用Bangumi娘了，请使用\~unreg解除契约
+
+![](media/34ec5da5dee5d7868078b1434b0b628a.png)
+
+嗯，不会提示什么，只要你说了\~unreg，Bangumi娘总是这么说，实际上也的确是这样…
