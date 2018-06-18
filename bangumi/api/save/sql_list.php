@@ -19,6 +19,10 @@ else {
 define("max_num",8);
 //接受参数
 $save_id=$_GET['save_id'];
+$list_detail=false;
+if($save_id=="*"){
+    $list_detail=true;
+}
 $type='send_'.$_GET['type'].'_msg';
 $to=$_GET['to'];
 $from=$_GET['from'];
@@ -43,7 +47,7 @@ if($row!=false){
         $data=json_decode($json,true);
 
         //https://api.bgm.tv/subject/109956
-        $re_msg="[CQ:image,file=".$data['images']['large']."]".
+        $re_msg=($data['images']['large']!=null?("[CQ:image,file=".$data['images']['large']."]"):"").
                 "\n[List]<$save_id>: ".$row["subject_".$save_id].
                 ($data['name_cn']!=""?"\n中文名:  ".$data['name_cn']:("")).
                 ($data['name']!=""?("\n原名:  ".$data['name']):("")).
@@ -100,7 +104,7 @@ if($row!=false){
 
                 }
                 // 的第 [".$su_status['id']."] 个"
-                $user_subject_submsg="\n\n[".$su_user_nick."] 收藏为 [".$su_status['name']."]".
+                $user_subject_submsg="\n[".$su_user_nick."] 收藏为 [".$su_status['name']."]".
                     $user_watched_msg.
                     $user_rating_msg.
                     $user_comment_msg.
@@ -122,7 +126,7 @@ if($row!=false){
 //                        )
 //                    )
 //                );
-                $user_subject_msg="\n\n".$user_subject_submsg;
+                $user_subject_msg="\n\n[CQ:image,file=".$su_user_avatar."]".$user_subject_submsg;
             }
             else{
                 $user_subject_submsg="\n\n<未收藏>";
@@ -146,9 +150,21 @@ if($row!=false){
 
     }
     else{
-        for($send_msg_id=0;$send_msg_id<constant("max_list")/constant("max_num");++$send_msg_id){
+        $send_continue=true;
+        for($send_msg_id=0;$send_continue&&$send_msg_id<constant("max_list")/constant("max_num");++$send_msg_id){
             //默认是全列
-            for($i=$send_msg_id*constant("max_num")+1;$i<=min(constant("max_list")-1,($send_msg_id+1)*constant("max_num"));++$i){
+            //$i<=min(constant("max_list")-1,($send_msg_id+1)*constant("max_num"))
+            for($num=0,$i=$send_msg_id*constant("max_num")+1;$num<($send_msg_id+1)*constant("max_num")&&$i<=constant("max_list");++$i){
+                //如果检测到已经排查到最后一个list后退出两层循环
+                if($i==constant("max_list")){
+                    $send_continue=false;
+                }
+                //排除空位list
+                if($row["subject_".$i]==0){
+                    continue;
+                }else{
+                    $num+=1;
+                }
 
                 //请求bangumi api
                 $url='https://api.bgm.tv/subject/'.$row["subject_".$i];
@@ -157,7 +173,7 @@ if($row!=false){
                 $data=json_decode($json,true);
 
                 //https://api.bgm.tv/subject/109956
-                $re_msg.="[CQ:image,file=".$data['images']['large']."]".
+                $re_msg.=($data['images']['large']!=null&&$list_detail?("[CQ:image,file=".$data['images']['large']."]"):"").
                     "\n[List]<$i>: ".$row["subject_".$i].
                     ($data['name_cn']!=""?"\n中文名:  ".$data['name_cn']:("")).
                     ($data['name']!=""?("\n原名:  ".$data['name']):("")).
@@ -218,7 +234,7 @@ if($row!=false){
                             $user_watched_msg.
                             $user_rating_msg.
                             $user_comment_msg.
-                            "\n".$su_user_nick." 的主页:  ".$su_user_url;
+                            ($list_detail?("\n".$su_user_nick." 的主页:  ".$su_user_url):"");
                         $user_subject_msg=$user_subject_submsg;
                     }
                     else{
