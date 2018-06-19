@@ -124,6 +124,7 @@ if($need_bgm_api){
     //{wish/collect/do/on_hold/dropped}
     $url_rating=($subject_rating==null)?"":"&rating=".$subject_rating;
     $url_comment=($subject_comment==null)?"":"&comment=".$subject_comment;
+    $subject_col=($subject_col==null)?"wish":$subject_col;
     $data="status="."$subject_col".$url_rating.$url_comment;
     $opts = array (
         'http' => array (
