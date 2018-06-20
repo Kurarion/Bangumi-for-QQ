@@ -93,7 +93,7 @@ else{
     $msg=array(
         array('type'=>"text",
             'data'=>array(
-                'text'=>"总计相符条目数: ".--$results_num.
+                'text'=>"总计相符条目数: ".$results_num.
                     "\n\n"
             )
         )
@@ -105,7 +105,12 @@ else{
         $subject_type=$type2name[$subject['type']];
         $subject_name=$subject['name'];
         $subject_name_cn=$subject['name_cn'];
-        $subject_img=$subject['images']['large'];
+        if($subject['images']!=null){
+            $subject_img=$subject['images']['large'];
+        }else{
+            $subject_img="http://www.irisu.cc/res/no_img.gif";
+        }
+
         //msg
         $subject_msg=array(
             array('type'=>"text",
