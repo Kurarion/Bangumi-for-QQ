@@ -740,7 +740,12 @@ else{
     $subject_rating_average=$subject_rating['score']==null?"无":$subject_rating['score'];
 
     $subject_rank=$data['rank']!=null?$data['rank']:"无";
-    $subject_img=$data['images']['large'];
+    if($data['images']!=null){
+        $subject_img=$data['images']['large'];
+    }else{
+        $subject_img="http://www.irisu.cc/res/no_img.gif";
+    }
+
 
     //条目收藏状态
     $subject_collection=$data['collection'];
@@ -915,7 +920,12 @@ else{
             $character_name=$character['name'];
             $character_name_cn=$character['name_cn'];
             $character_role=$character['role_name'];
-            $character_img=$character['images']['large'];
+            if($character['images']!=null){
+                $character_img=$character['images']['large'];
+            }else{
+                $character_img="http://www.irisu.cc/res/no_img.gif";
+            }
+
             $character_comment_num=$character['comment'];
             $character_collect_num=$character['collects'];
 
@@ -984,7 +994,12 @@ else{
                 $character_actor=$character['actors'][$actor_num];
                 $actor_url=$character_actor['url'];
                 $actor_name=$character_actor['name'];
-                $actor_img=$character_actor['images']['large'];
+                if($character_actor['images']!=null){
+                    $actor_img=$character_actor['images']['large'];
+                }else{
+                    $actor_img="http://www.irisu.cc/res/no_img.gif";
+                }
+
 
                 //声优
                 //声优最终头像
