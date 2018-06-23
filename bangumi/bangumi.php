@@ -185,7 +185,7 @@ switch ($low_msg[1]){
             $size=count($para);
             //echo "size: ".$size."\n";
             //echo "var_dump: ".var_dump($para[2])."\n";
-            $save_id=$size>1?$para[1]:null;
+            $save_id=$size>1?urlencode($para[1]):null;
             //echo $para;
             $php.="save_id=".$save_id."&";
         }

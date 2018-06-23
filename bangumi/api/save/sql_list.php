@@ -15,6 +15,9 @@ else {
     constant('password')==$_GET['access']?:die("error auth");
     echo "access";
 }
+$type='send_'.$_GET['type'].'_msg';
+$to=$_GET['to'];
+$from=$_GET['from'];
 //一次发送几个
 define("max_num",8);
 //接受参数
@@ -23,9 +26,16 @@ $list_detail=false;
 if($save_id=="*"){
     $list_detail=true;
 }
-$type='send_'.$_GET['type'].'_msg';
-$to=$_GET['to'];
-$from=$_GET['from'];
+//\access\send_msg($type,$to,$save_id." sai",constant('token'));
+if(false!==strpos($save_id,"#")){
+    $decode_save_id=$save_id[strpos($save_id,"#")+1];
+    $maybe_second_id=$save_id[strpos($save_id,"#")+2];
+    if(is_numeric($maybe_second_id)){
+        $decode_save_id=$decode_save_id*10+$maybe_second_id;
+    }
+    $save_id=$decode_save_id;
+    //\access\send_msg($type,$to,$save_id." sai",constant('token'));
+}
 //qq回复msg
 $re_msg="";
 //sql查寻
