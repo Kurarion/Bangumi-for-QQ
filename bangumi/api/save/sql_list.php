@@ -161,10 +161,12 @@ if($row!=false){
     }
     else{
         $send_continue=true;
+        $i=1;
         for($send_msg_id=0;$send_continue&&$send_msg_id<constant("max_list")/constant("max_num");++$send_msg_id){
             //默认是全列
+            global $i;
             //$i<=min(constant("max_list")-1,($send_msg_id+1)*constant("max_num"))
-            for($num=0,$i=$send_msg_id*constant("max_num")+1;$num<($send_msg_id+1)*constant("max_num")&&$i<=constant("max_list");++$i){
+            for($num=0;$num<($send_msg_id+1)*constant("max_num")&&$i<=constant("max_list");++$i){
                 //如果检测到已经排查到最后一个list后退出两层循环
                 if($i==constant("max_list")){
                     $send_continue=false;
