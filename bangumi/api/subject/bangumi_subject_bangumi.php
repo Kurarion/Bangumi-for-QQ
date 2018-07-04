@@ -1167,7 +1167,12 @@ $data=json_decode($json,true);
             $subject_rating_average=$subject_rating['score']==null?"无":$subject_rating['score'];
 
             $subject_rank=$subject['rank']!=null?$subject['rank']:"无";
-            $subject_img=$subject['images']['large'];
+            //$subject_img=$subject['images']['large'];
+            if($subject['images']!=null){
+                $subject_img=$subject['images']['large'];
+            }else{
+                $subject_img="http://www.irisu.cc/res/no_img.gif";
+            }
 
             //条目收藏状态
             $subject_collection=$subject['collection'];
