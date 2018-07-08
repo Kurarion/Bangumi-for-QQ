@@ -258,6 +258,22 @@ switch ($low_msg[1]){
 
         $dead=true;
         break;
+    case 'd':
+        if(1==strpos($low_msg,"dmhy")){
+            $php.="/dmhy/dmhy_moe.php?";
+            $para=explode(" ",$msg);
+            $size=count($para);
+            $command=$size>1?urlencode($para[1]):null;
+            $parameter=$size>2?urlencode($para[2]):null;
+            $php.="command=".$command."&parameter=".$parameter."&";
+        }else{
+            $re_msg[0]['data']['text']="~dmhy是相关订阅资源的功能".
+                "\n当然这只能给魔法少女使用哦~"
+                ."\n【----具体使用----】"
+                ."\n施工中...";
+            $dead=true;
+        }
+        break;
     default:
         //匹配不能
         //die();
