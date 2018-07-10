@@ -171,6 +171,7 @@ if($user_info!=false){
                 break;
             }
         case 'update':
+            global $is_update;
             $is_update=true;
             //手动更新
             {
@@ -304,7 +305,7 @@ if($user_info!=false){
                         $msg.=$itemsMsg;
                         if($itemNum%constant("once_items_num")==0){
 
-                            //分条发送
+                            //用来发成功(有更新)的第一条
                             if($need_reply){
                                 \access\send_msg($type,$to ,$msg,constant('token'));
                             }
@@ -331,14 +332,15 @@ if($user_info!=false){
                     \access\sql_query($type,$to,$update_sql);
                 }
                 //回复QQ
+                //情况1是针对大于Max个资源
                 if($need_reply&&$itemNum%constant("once_items_num")!=0){
-                    //\access\send_msg($type,$to ,$msg,constant('token'));
-                }else{
+                    \access\send_msg($type,$to ,$msg,constant('token'));
+                }elseif($itemNum%constant("once_items_num")!=0){
                     //
                     $msg.="\n暂无更新...";
-                    //\access\send_msg($type,$to ,$msg,constant('token'));
+                    \access\send_msg($type,$to ,$msg,constant('token'));
                 }
-                \access\send_msg($type,$to ,$msg,constant('token'));
+                //\access\send_msg($type,$to ,$msg,constant('token'));
             }
             break;
         default:
