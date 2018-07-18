@@ -36,6 +36,7 @@ if(false!==strpos($save_id,"#")){
     $save_id=$decode_save_id;
     //\access\send_msg($type,$to,$save_id." sai",constant('token'));
 }
+
 //qq回复msg
 $re_msg="";
 //sql查寻
@@ -250,7 +251,7 @@ if($row!=false){
                         $user_subject_msg=$user_subject_submsg;
                     }
                     else{
-                        $user_subject_submsg="\n<未收藏>";
+                        $user_subject_submsg="\n\n<未收藏>";
                         $user_subject_msg=$user_subject_submsg;
                     }
                     $user_subject_msg.= "\n----------------\n";
