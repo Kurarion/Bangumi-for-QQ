@@ -101,19 +101,33 @@ if($row!=false){
                 $user_comment_msg=$su_comment==""?"":"\n吐槽:  $su_comment";
                 $user_watched_msg=$su_ep==0?"":"\n完成度: $su_ep/$final_subject_eps \n";
                 if($su_ep!=0){
-                    for($i=0;$i<$su_ep;++$i){
-                        $user_watched_msg.="★";
-                    }
-                    if($final_subject_eps!="??"){
-                        for ($i=0;$i<$subject_eps-$su_ep;++$i) {
-                            $user_watched_msg .= "☆";
-                        }
-                    }
-                    else{
-                        $user_watched_msg.="......";
-                    }
+                            //放送
+                            
+                            $date1=date_create($subject_air_date);
+                            $date2=date_create(date("Y-m-d"));
+                            $diff=date_diff($date1,$date2);
+                            $day=$diff->format("%a");
+                            $aired_subject_eps=((intval($day/7.0))>$subject_eps)?$subject_eps:(intval($day/7.0));
+                            //$user_watched_msg.=date("Y-m-d")."   ".$subject_air_date."   ".$aired_subject_eps;
+                            //
+                            for($user_watched_msg.="Δ",$j=1;$j<$su_ep;++$j){
+                                $user_watched_msg.="-Δ";
+                            }
+                            if($final_subject_eps!="??"){
+                                for($j=$su_ep;$j<$aired_subject_eps;++$j)
+                                {
+                                    $user_watched_msg.="-Х";
+                                }
+                                for ($j=0;$j<$subject_eps-$aired_subject_eps;++$j)
+                                {
+                                    $user_watched_msg .= "-Λ";
+                                }
+                            }
+                            else{
+                                $user_watched_msg.="......";
+                            }
 
-                }
+                        }
                 // 的第 [".$su_status['id']."] 个"
                 $user_subject_submsg="\n[".$su_user_nick."] 收藏为 [".$su_status['name']."]".
                     $user_watched_msg.
@@ -229,12 +243,26 @@ if($row!=false){
                         $user_comment_msg=$su_comment==""?"":"\n吐槽:  $su_comment";
                         $user_watched_msg=$su_ep==0?"":"\n完成度: $su_ep/$final_subject_eps \n";
                         if($su_ep!=0){
-                            for($j=0;$j<$su_ep;++$j){
-                                $user_watched_msg.="★";
+                            //放送
+                            
+                            $date1=date_create($subject_air_date);
+                            $date2=date_create(date("Y-m-d"));
+                            $diff=date_diff($date1,$date2);
+                            $day=$diff->format("%a");
+                            $aired_subject_eps=((intval($day/7.0))>$subject_eps)?$subject_eps:(intval($day/7.0));
+                            //$user_watched_msg.=date("Y-m-d")."   ".$subject_air_date."   ".$aired_subject_eps;
+                            //
+                            for($user_watched_msg.="Δ",$j=1;$j<$su_ep;++$j){
+                                $user_watched_msg.="-Δ";
                             }
                             if($final_subject_eps!="??"){
-                                for ($j=0;$j<$subject_eps-$su_ep;++$j) {
-                                    $user_watched_msg .= "☆";
+                                for($j=$su_ep;$j<$aired_subject_eps;++$j)
+                                {
+                                    $user_watched_msg.="-Х";
+                                }
+                                for ($j=0;$j<$subject_eps-$aired_subject_eps;++$j)
+                                {
+                                    $user_watched_msg .= "-Λ";
                                 }
                             }
                             else{
