@@ -107,7 +107,13 @@ if($row!=false){
                             $date2=date_create(date("Y-m-d"));
                             $diff=date_diff($date1,$date2);
                             $day=$diff->format("%a");
-                            $aired_subject_eps=((intval($day/7.0))>$subject_eps)?$subject_eps:(intval($day/7.0));
+                            if($diff->format("%R")=='+'){
+                                $aired_subject_eps=((1+intval($day/7.0))>$subject_eps)?$subject_eps:(1+intval($day/7.0));
+                            }
+                            else
+                            {
+                                $aired_subject_eps=0;
+                            }
                             //$user_watched_msg.=date("Y-m-d")."   ".$subject_air_date."   ".$aired_subject_eps;
                             //
                             for($user_watched_msg.="Δ",$j=1;$j<$su_ep;++$j){
@@ -249,7 +255,13 @@ if($row!=false){
                             $date2=date_create(date("Y-m-d"));
                             $diff=date_diff($date1,$date2);
                             $day=$diff->format("%a");
-                            $aired_subject_eps=((intval($day/7.0))>$subject_eps)?$subject_eps:(intval($day/7.0));
+                            if($diff->format("%R")=='+'){
+                                $aired_subject_eps=((1+intval($day/7.0))>$subject_eps)?$subject_eps:(1+intval($day/7.0));
+                            }
+                            else
+                            {
+                                $aired_subject_eps=0;
+                            }
                             //$user_watched_msg.=date("Y-m-d")."   ".$subject_air_date."   ".$aired_subject_eps;
                             //
                             for($user_watched_msg.="Δ",$j=1;$j<$su_ep;++$j){
