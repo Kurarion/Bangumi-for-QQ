@@ -22,9 +22,26 @@ $from=$_GET['from'];
 define("max_num",8);
 //接受参数
 $save_id=$_GET['save_id'];
+//
 $list_detail=false;
+$list_current=false;
+$list_day=0;
+$list_current_day=date("w")==0?7:date("w");
 if($save_id=="*"){
     $list_detail=true;
+}elseif($save_id[0]=="~"){
+    $list_detail=true;
+    $list_current=true;
+    
+    if($save_id[1]!=null&&$save_id[1]>0&&$save_id[1]<8){
+
+
+        //$list_day=7-($save_id[1]+$list_current_day)%7;
+        $list_day=$save_id[1]>$list_current_day?$save_id[1]-7-$list_current_day:$save_id[1]-$list_current_day;
+
+        $list_current_day=$save_id[1];
+    }
+    
 }
 //\access\send_msg($type,$to,$save_id." sai",constant('token'));
 if(false!==strpos($save_id,"#")){
@@ -36,7 +53,7 @@ if(false!==strpos($save_id,"#")){
     $save_id=$decode_save_id;
     //\access\send_msg($type,$to,$save_id." sai",constant('token'));
 }
-
+date_default_timezone_set("Asia/Tokyo");
 //qq回复msg
 $re_msg="";
 //sql查寻
@@ -94,6 +111,7 @@ if($row!=false){
                 //subject
                 $subject_eps=$data['eps_count'];
                 $subject_rating=$data['rating'];
+                $subject_air_date=$data['air_date'];
 
                 $final_subject_rating=$subject_rating['score']==null?"":"<平均: ".$subject_rating['score'].">";
                 $final_subject_eps=$subject_eps==null?"??":$subject_eps;
@@ -183,11 +201,14 @@ if($row!=false){
     else{
         $send_continue=true;
         $i=1;
+        $num=0;
+        $re_msg="吉祥物[背包]列表:\n";
         for($send_msg_id=0;$send_continue&&$send_msg_id<constant("max_list")/constant("max_num");++$send_msg_id){
             //默认是全列
             global $i;
+            global $num;
             //$i<=min(constant("max_list")-1,($send_msg_id+1)*constant("max_num"))
-            for($num=0;$num<($send_msg_id+1)*constant("max_num")&&$i<=constant("max_list");++$i){
+            for(;$num<($send_msg_id+1)*constant("max_num")&&$i<=constant("max_list");++$i){
                 //如果检测到已经排查到最后一个list后退出两层循环
                 if($i==constant("max_list")){
                     $send_continue=false;
@@ -196,15 +217,45 @@ if($row!=false){
                 if($row["subject_".$i]==0){
                     continue;
                 }else{
-                    $num+=1;
+                    //$num+=1;
                 }
-
                 //请求bangumi api
                 $url='https://api.bgm.tv/subject/'.$row["subject_".$i];
                 //bangumi JSON
                 $json=file_get_contents($url);
                 $data=json_decode($json,true);
+                //
+                $date1=date_create($data['air_date']);
+                $date2=date_create(date("Y-m-d"));
+                $diff=date_diff($date1,$date2);
+                $day=$diff->format("%a");
+                //排除非当天的番组
+                if($list_current)
+                {
+                    if($diff->format("%R")=='+'){
+                        if(($day+$list_day)%7==0){
+                            if((1+intval($day/7.0))<=$data['eps_count']||$data['eps_count']==null)
+                            {
+                                $re_msg.="<".$int2weekday[$list_current_day].">\n";
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
 
+
+                    }
+                    else{
+                        continue;
+                    }
+                }
+                //
+                $num+=1;
                 //https://api.bgm.tv/subject/109956
                 $re_msg.=($data['images']['large']!=null&&$list_detail?("[CQ:image,file=".$data['images']['large']."]"):"").
                     "\n[List]<$i>: ".$row["subject_".$i].
@@ -242,6 +293,7 @@ if($row!=false){
                         //subject
                         $subject_eps=$data['eps_count'];
                         $subject_rating=$data['rating'];
+                        //$subject_air_date=$data['air_date'];
 
                         $final_subject_rating=$subject_rating['score']==null?"":"<平均: ".$subject_rating['score'].">";
                         $final_subject_eps=$subject_eps==null?"??":$subject_eps;
@@ -249,12 +301,7 @@ if($row!=false){
                         $user_comment_msg=$su_comment==""?"":"\n吐槽:  $su_comment";
                         $user_watched_msg=$su_ep==0?"":"\n完成度: $su_ep/$final_subject_eps \n";
                         if($su_ep!=0){
-                            //放送
-                            
-                            $date1=date_create($subject_air_date);
-                            $date2=date_create(date("Y-m-d"));
-                            $diff=date_diff($date1,$date2);
-                            $day=$diff->format("%a");
+                            //放送                        
                             if($diff->format("%R")=='+'){
                                 $aired_subject_eps=((1+intval($day/7.0))>$subject_eps)?$subject_eps:(1+intval($day/7.0));
                             }
