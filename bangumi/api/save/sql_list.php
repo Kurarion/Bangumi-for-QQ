@@ -84,6 +84,8 @@ if($row!=false){
                 ($data['name_cn']!=""?"\n中文名:  ".$data['name_cn']:("")).
                 ($data['name']!=""?("\n原名:  ".$data['name']):("")).
                 ($data['type']!=""?("\n类型:  ".$type2name[$data['type']]):("")).
+                ($data['air_date']=="0000-00-00"?"":("\n放送日期:  ".$data['air_date'])).
+                ($data['air_weekday']==null?"":("\n放送星期:  ".$int2weekday[$data['air_weekday']])).
                 ($data['url']!=""?("\nUrl:  ".$data['url']):(""));
         //此处添加用户对条目的信息
         //$user_access_token=\access\get_access_token($type,$to,$from);
@@ -315,7 +317,6 @@ if($row!=false){
                     ($data['type']!=""?("\n类型:  ".$type2name[$data['type']]):("")).
                     ($data['air_date']=="0000-00-00"?"":("\n放送日期:  ".$data['air_date'])).
                     ($data['air_weekday']==null?"":("\n放送星期:  ".$int2weekday[$data['air_weekday']])).
-                    ($data['type']!=""?("\n放送星期:  ".$type2name[$data['type']]):("")).
                     ($data['url']!=""?("\nUrl:  ".$data['url']):(""));
                 //此处添加用户对条目的信息
                 //$user_access_token=\access\get_access_token($type,$to,$from);
