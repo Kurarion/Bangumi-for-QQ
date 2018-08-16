@@ -26,6 +26,7 @@ $save_id=$_GET['save_id'];
 $list_detail=false;
 $list_current=false;
 $list_day=0;
+$list_to_look=false;
 $list_current_day=date("w")==0?7:date("w");
 if($save_id=="*"){
     $list_detail=true;
@@ -42,6 +43,9 @@ if($save_id=="*"){
         $list_current_day=$save_id[1];
     }
     
+}elseif($save_id=="?"){
+    $list_detail=true;
+    $list_to_look=true;
 }
 //\access\send_msg($type,$to,$save_id." sai",constant('token'));
 if(false!==strpos($save_id,"#")){
@@ -134,8 +138,21 @@ if($row!=false){
                             }
                             //$user_watched_msg.=date("Y-m-d")."   ".$subject_air_date."   ".$aired_subject_eps;
                             //
-                            for($user_watched_msg.="Δ",$j=1;$j<$su_ep;++$j){
-                                $user_watched_msg.="-Δ";
+                            if($aired_subject_eps==$su_ep)
+                            {
+                                for($user_watched_msg.="Δ",$j=1;$j<$su_ep-1;++$j)
+                                {
+                                    $user_watched_msg.="-Δ";
+                                }
+                                $user_watched_msg.="-₳";
+                            }
+                            else
+                            {
+                                for($user_watched_msg.="Δ",$j=1;$j<$su_ep;++$j)
+                                {
+                                    $user_watched_msg.="-Δ";
+                                }
+                                
                             }
                             if($final_subject_eps!="??"){
                                 for($j=$su_ep;$j<$aired_subject_eps;++$j)
@@ -254,6 +271,40 @@ if($row!=false){
                         continue;
                     }
                 }
+                //排除看到最新的番
+                $data_user=null;
+                if($list_to_look)
+                {
+                    if($user_access_token!=false)
+                    {
+                        $url_user='https://api.bgm.tv/collection/'.$row["subject_".$i]."?access_token=".$user_access_token;
+                        //bangumi JSON
+                        $json_user=file_get_contents($url_user);
+                        $data_user=json_decode($json_user,true);
+                        if(!array_key_exists("error",$data_user))
+                        {
+                            $su_ep=$data_user['ep_status'];
+                            $aired_subject_eps=((1+intval($day/7.0))>$data['eps_count'])?$data['eps_count']:(1+intval($day/7.0));
+                            if($su_ep<$aired_subject_eps)
+                            {
+                                
+                                $re_msg.="<待看>\n";
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
                 //
                 $num+=1;
                 //https://api.bgm.tv/subject/109956
@@ -262,17 +313,23 @@ if($row!=false){
                     ($data['name_cn']!=""?"\n中文名:  ".$data['name_cn']:("")).
                     ($data['name']!=""?("\n原名:  ".$data['name']):("")).
                     ($data['type']!=""?("\n类型:  ".$type2name[$data['type']]):("")).
+                    ($data['air_date']=="0000-00-00"?"":("\n放送日期:  ".$data['air_date'])).
+                    ($data['air_weekday']==null?"":("\n放送星期:  ".$int2weekday[$data['air_weekday']])).
+                    ($data['type']!=""?("\n放送星期:  ".$type2name[$data['type']]):("")).
                     ($data['url']!=""?("\nUrl:  ".$data['url']):(""));
                 //此处添加用户对条目的信息
                 //$user_access_token=\access\get_access_token($type,$to,$from);
                 if($user_access_token!=false){
                     //有token
                     //请求bangumi api
-
-                    $url_user='https://api.bgm.tv/collection/'.$row["subject_".$i]."?access_token=".$user_access_token;
-                    //bangumi JSON
-                    $json_user=file_get_contents($url_user);
-                    $data_user=json_decode($json_user,true);
+                    if(!$list_to_look)
+                    {
+                        $url_user='https://api.bgm.tv/collection/'.$row["subject_".$i]."?access_token=".$user_access_token;
+                        //bangumi JSON
+                        $json_user=file_get_contents($url_user);
+                        $data_user=json_decode($json_user,true); 
+                    }
+                    
                     //echo $data_user;
                     //\access\send_msg($type,$to,$json_user." ",constant('token'));
                     //如果有收藏
@@ -311,9 +368,23 @@ if($row!=false){
                             }
                             //$user_watched_msg.=date("Y-m-d")."   ".$subject_air_date."   ".$aired_subject_eps;
                             //
-                            for($user_watched_msg.="Δ",$j=1;$j<$su_ep;++$j){
-                                $user_watched_msg.="-Δ";
+                            if($aired_subject_eps==$su_ep)
+                            {
+                                for($user_watched_msg.="Δ",$j=1;$j<$su_ep-1;++$j)
+                                {
+                                    $user_watched_msg.="-Δ";
+                                }
+                                $user_watched_msg.="-₳";
                             }
+                            else
+                            {
+                                for($user_watched_msg.="Δ",$j=1;$j<$su_ep;++$j)
+                                {
+                                    $user_watched_msg.="-Δ";
+                                }
+                                
+                            }
+                            
                             if($final_subject_eps!="??"){
                                 for($j=$su_ep;$j<$aired_subject_eps;++$j)
                                 {

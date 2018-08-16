@@ -839,30 +839,43 @@ else{
             $user_rating_msg=$su_rating==0?"":"\n评分:  $su_rating   ".$final_subject_rating;
             $user_comment_msg=$su_comment==""?"":"\n吐槽:  $su_comment";
             $user_watched_msg=$su_ep==0?"":"\n完成度: $su_ep/$final_subject_eps \n";
-                       if($su_ep!=0){
-                //放送
-                date_default_timezone_set("Asia/Tokyo");
-                $date1=date_create($subject_air_date);
-                $date2=date_create(date("Y-m-d"));
-                $diff=date_diff($date1,$date2);
-                $day=$diff->format("%a");
+            if($su_ep!=0){
+            	//放送
+            	date_default_timezone_set("Asia/Tokyo");
+            	$date1=date_create($subject_air_date);
+            	$date2=date_create(date("Y-m-d"));
+            	$diff=date_diff($date1,$date2);
+            	$day=$diff->format("%a");
                 if($diff->format("%R")=='+'){
                     $aired_subject_eps=((1+intval($day/7.0))>$subject_eps)?$subject_eps:(1+intval($day/7.0));
                 }
-                else
+				else
                 {
                     $aired_subject_eps=0;
                 }
-                //$user_watched_msg.=date("Y-m-d")."   ".$subject_air_date."   ".$aired_subject_eps;
-                //
-                for($user_watched_msg.="Δ",$i=1;$i<$su_ep;++$i){
-                    $user_watched_msg.="-Δ";
-                }
+            	//$user_watched_msg.=date("Y-m-d")."   ".$subject_air_date."   ".$aired_subject_eps;
+            	//
+                if($aired_subject_eps==$su_ep)
+                            {
+                                for($user_watched_msg.="Δ",$j=1;$j<$su_ep-1;++$j)
+                                {
+                                    $user_watched_msg.="-Δ";
+                                }
+                                $user_watched_msg.="-₳";
+                            }
+                            else
+                            {
+                                for($user_watched_msg.="Δ",$j=1;$j<$su_ep;++$j)
+                                {
+                                    $user_watched_msg.="-Δ";
+                                }
+                                
+                            }
                 if($final_subject_eps!="??"){
-                    for($i=$su_ep;$i<$aired_subject_eps;++$i)
-                    {
-                        $user_watched_msg.="-Х";
-                    }
+                	for($i=$su_ep;$i<$aired_subject_eps;++$i)
+                	{
+                		$user_watched_msg.="-Х";
+                	}
                     for ($i=0;$i<$subject_eps-$aired_subject_eps;++$i)
                     {
                         $user_watched_msg .= "-Λ";
