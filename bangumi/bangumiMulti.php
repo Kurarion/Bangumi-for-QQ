@@ -35,6 +35,7 @@ $new_json_data=array(
 $php="http://127.0.0.1/bangumi/bangumi.php";
 
 //\access\send_msg('send_private_msg',597320012,"orign_data: ".$data['message'],constant("token"));
+$orign_data=str_replace('!','~',$orign_data);
 $para=explode("~",$orign_data);
 $size=count($para);
 for($i=1;$i<$size;++$i)
