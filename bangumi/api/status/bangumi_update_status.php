@@ -138,7 +138,7 @@ if($need_bgm_api){
 
     }else{
         //失败
-        \access\send_msg($type,$to,"条目 ".$subject_id." 进度更新失败...\n请确保有收藏过此条目",constant('token'));
+        \access\send_msg($type,$to,"条目 ".$subject_id." 进度更新失败...\n请确保有收藏过此条目并且更新的进度与上次不同",constant('token'));
     }
 
 }
