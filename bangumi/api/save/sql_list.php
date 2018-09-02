@@ -30,7 +30,7 @@ $list_to_look=false;
 $list_current_day=date("w")==0?7:date("w");
 if($save_id=="*"){
     $list_detail=true;
-}elseif($save_id[0]=="~"){
+}elseif($save_id[0]=="-"){
     $list_detail=true;
     $list_current=true;
     
