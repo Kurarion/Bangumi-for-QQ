@@ -16,22 +16,41 @@ $data=json_decode($json,true);
     "font": 456
  * }
  */
+/*
 
-
-$orign_data=$data['message'];
 $user_id=$data['user_id'];
 $post_type=$data['post_type'];
 $message_type=$data['message_type'];
 $sub_type=$data['sub_type'];
+*/
+$orign_data=$data['message'];
 
 $new_json_data=array(
-	'post_type'=>$post_type,
-	'message_type'=>$message_type,
-	'sub_type'=>$sub_type,
+	'post_type'=>$data['post_type'],
+	'message_type'=>$data['message_type'],
+	'sub_type'=>$data['sub_type'],
 	'message'=>$orign_data,
-	'user_id'=>$user_id
+	'user_id'=>$data['user_id'],
+	'group_id'=>$data['group_id'],
+	'discuss_id'=>$data['discuss_id']
 );
+/*
+switch ($data['sub_type']){
+    case "private":
+        break;
+    case "group":
+        $new_json_data['group_id']=$data['group_id'];
+        break;
+    case "discuss":
+        $new_json_data['discuss_id']=$data['discuss_id'];
+        break;
+    default:
+        $new_json_data=null;
+        die("error in switch(type)!");
 
+        break;
+}
+*/
 $php="http://127.0.0.1/bangumi/bangumi.php";
 
 //\access\send_msg('send_private_msg',597320012,"orign_data: ".$data['message'],constant("token"));
