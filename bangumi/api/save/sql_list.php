@@ -222,6 +222,18 @@ if($row!=false){
         $i=1;
         $num=0;
         $re_msg="吉祥物[背包]列表:\n";
+        //遍历查找空位
+        $black_msg=null;
+        for($h=1;$h<constant("max_list");++$h)
+        {
+
+            if($row["subject_".$h]==0)
+                $black_msg.='['.$h.'] ';
+        }
+        if($black_msg!=null)
+        {
+            $re_msg.="\n空位:".$black_msg."\n";
+        }
         for($send_msg_id=0;$send_continue&&$send_msg_id<constant("max_list")/constant("max_num");++$send_msg_id){
             //默认是全列
             global $i;
@@ -248,6 +260,34 @@ if($row!=false){
                 $date2=date_create(date("Y-m-d"));
                 $diff=date_diff($date1,$date2);
                 $day=$diff->format("%a");
+                //用户token
+                $data_user=null;
+                if($user_access_token!=false)
+                {
+                        $url_user='https://api.bgm.tv/collection/'.$row["subject_".$i]."?access_token=".$user_access_token;
+                        //bangumi JSON
+                        $json_user=file_get_contents($url_user);
+                        $data_user=json_decode($json_user,true);
+
+                        //自动清零看完的动画
+                        //调用sql_save
+
+                        if($data_user['ep_status']!=null&&$data['eps_count']!=null&&$data_user['ep_status']>=$data['eps_count'])
+                        {
+                            $save_id=$i;
+                            $save_url="http://127.0.0.1/bangumi/api/save/sql_save.php?subject_id=0&save_id=".$save_id."&type=".$_GET['type']."&to=".$to."&from=".$from."&access=".constant("password");
+
+                            file_get_contents($save_url);
+                            //提示用户 另发送
+                            \access\send_msg($type,$to,"发现[".$i."]号位的[".$data['name_cn']."]已完成，清零之~",constant('token'));
+                            //
+                            continue;
+                        }
+                            
+                        
+                }
+                
+                
                 //排除非当天的番组
                 if($list_current)
                 {
@@ -274,15 +314,14 @@ if($row!=false){
                     }
                 }
                 //排除看到最新的番
-                $data_user=null;
                 if($list_to_look)
                 {
                     if($user_access_token!=false)
                     {
-                        $url_user='https://api.bgm.tv/collection/'.$row["subject_".$i]."?access_token=".$user_access_token;
+                        //$url_user='https://api.bgm.tv/collection/'.$row["subject_".$i]."?access_token=".$user_access_token;
                         //bangumi JSON
-                        $json_user=file_get_contents($url_user);
-                        $data_user=json_decode($json_user,true);
+                        //$json_user=file_get_contents($url_user);
+                        //$data_user=json_decode($json_user,true);
                         if(!array_key_exists("error",$data_user))
                         {
                             $su_ep=$data_user['ep_status'];
@@ -323,13 +362,12 @@ if($row!=false){
                 if($user_access_token!=false){
                     //有token
                     //请求bangumi api
-                    if(!$list_to_look)
-                    {
-                        $url_user='https://api.bgm.tv/collection/'.$row["subject_".$i]."?access_token=".$user_access_token;
+                    
+                        //$url_user='https://api.bgm.tv/collection/'.$row["subject_".$i]."?access_token=".$user_access_token;
                         //bangumi JSON
-                        $json_user=file_get_contents($url_user);
-                        $data_user=json_decode($json_user,true); 
-                    }
+                        //$json_user=file_get_contents($url_user);
+                        //$data_user=json_decode($json_user,true); 
+                    
                     
                     //echo $data_user;
                     //\access\send_msg($type,$to,$json_user." ",constant('token'));
