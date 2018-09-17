@@ -395,7 +395,7 @@ namespace access{
     //用于获得save中指定id的subject id 这里为了方便如果使用了编号为0的save则重定向到last subject
     //只会返回false和正确的ID号
     function read_save($type,$to,$from,$save_id){
-        if($save_id>0&&$save_id<constant("max_list")){
+        if(is_numeric($save_id)&&$save_id>0&&$save_id<constant("max_list")){
             if((int)$save_id==0){
                 return get_last_subject($type,$to,$from);
             }
@@ -407,13 +407,52 @@ namespace access{
                 $row=mysqli_fetch_array($result,MYSQLI_NUM);
                 //如果之前没有记录（默认为0）或者没有注册即没有这个记录 返回false
                 if($row==0||$row==false){
-                    return false;
+                    return false;//1
                 }
                 return $row[0];
             }
         }
         else{
-            return false;
+            $right_id=0;
+            $right_num=-1;
+            $get_save_sql="select *
+                              from bgm_subject_memory
+                              where user_qq=$from";
+            $result=\access\sql_query($type,$to,$get_save_sql);
+            $row=mysqli_fetch_array($result,MYSQLI_ASSOC);
+            //查找具体的
+            if($row==0||$row==false){
+                    return false;//2
+            }
+            //识别Right_ID
+            //#>02Happy Suger Life<#02
+            $list_name=$row['List_Name'];
+            //找到名字
+            $name_site=stripos($list_name,$save_id);
+
+            //找到相应的编号的分割位置
+            if($name_site!==false){
+                $right_num_site=stripos($list_name,'<#',$name_site);
+            }else{
+                $right_num_site=false;
+            }
+           
+            //编号位置
+            if($right_num_site!==false){
+                $right_num=$list_name[$right_num_site+2]*10+$list_name[$right_num_site+3];
+            }else{
+                $right_num=-1;
+            }
+            //debug
+            //\access\send_msg('send_private_msg',597320012,$list_name.'@'.$name_site.'@'.$save_id.'@'.$right_num_site.'@'.$right_num,constant('token'));
+            //
+            if($right_num!=-1){
+                $right_id=$row['subject_'.$right_num];
+                return $right_id;
+            }else{
+                return false;//3
+            }
+            
         }
 
 
