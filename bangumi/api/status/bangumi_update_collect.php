@@ -52,17 +52,22 @@ $decode_subject_id=0;
 //这里是用作情况二的解码识别
 if($subject_id!=null&&!is_numeric($subject_id)){
     //\access\send_msg($type,$to,"$subject_id".strpos($subject_id,"#"),constant('token'));
-    if(false!==strpos($subject_id,"#")){
-        $decode_subject_id=$subject_id[strpos($subject_id,"#")+1];
-        $maybe_second_id=$subject_id[strpos($subject_id,"#")+2];
+    $site=strrpos($subject_id,"#");
+    if(false!==$site){
+        $decode_subject_id=$subject_id[$site+1];
+        $maybe_second_id=$subject_id[$site+2];
         if(is_numeric($maybe_second_id)){
             $decode_subject_id=$decode_subject_id*10+$maybe_second_id;
         }
         //\access\send_msg($type,$to,"$decode_subject_id----",constant('token'));
         if(is_numeric($decode_subject_id)&&$decode_subject_id>=0&&$decode_subject_id<constant("max_list")){
             $use_save=true;
+        }//否则识别List_Name
+        else{
+            $use_save=true;
+            $decode_subject_id=substr($subject_id,$site+1);
         }
-    }
+}
 }
 
 //情况一：省略$subject_id （用last代替）
@@ -104,7 +109,7 @@ if($subject_col==null||((!is_numeric($subject_id)||$_GET['subject_detail']!=null
 //情况二：使用[]获取仓库subject ID
 if($use_save){
     //\access\send_msg($type,$to,"情况二：使用[]获取仓库",constant('token'));
-    $subject_id=\access\read_save($type,$to,$from,(int)$decode_subject_id);
+    $subject_id=\access\read_save($type,$to,$from,$decode_subject_id);
     //\access\send_msg($type,$to,"情况二：使用[]获取仓库d",constant('token'));
     //需要请求API
     $need_bgm_api=true;
