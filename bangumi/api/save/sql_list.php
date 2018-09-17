@@ -279,7 +279,7 @@ if($row!=false){
 
                             file_get_contents($save_url);
                             //提示用户 另发送
-                            \access\send_msg($type,$to,"发现[".$i."]号位的[".$data['name_cn']."]已完成，清零之~",constant('token'));
+                            \access\send_msg($type,$to,"发现[".$i."]号位".($data['name_cn']==null?'':('['.$data['name_cn'].($data['name']==null?'':('('.$data['name'].')')).']'))."已完成，清零之~",constant('token'));
                             //
                             continue;
                         }
