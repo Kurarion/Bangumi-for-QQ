@@ -147,9 +147,22 @@ if($need_bgm_api){
     $json = file_get_contents($url, false, $context);
 
     $return_data=json_decode($json,true);
+
+    //条目搜索
+    $subject_name='';
+    if($subject_id!=0){
+                //请求bangumi api
+        $urlx='https://api.bgm.tv/subject/'.$subject_id;
+        //bangumi JSON
+        $jsonx=file_get_contents($urlx);
+        $datax=json_decode($jsonx,true);
+
+        $subject_name=($datax['name_cn']!=null?$datax['name_cn']:'').($datax['name']!=null?('('.$datax['name'].')'):'');
+    }
+
     if(array_key_exists("status",$return_data)){
         //可能更新成功
-        \access\send_msg($type,$to, $return_data['user']['nickname']." 已收藏条目 ".$subject_id." 为 ".$status2col[$subject_col],constant('token'));
+        \access\send_msg($type,$to, $return_data['user']['nickname']." 已收藏条目 ".$subject_name.'['.$subject_id."] 为 ".$status2col[$subject_col],constant('token'));
         //\access\send_msg($type,$to,$data,constant('token'));
         //如果需要，直接调用subject
         if($subject_detail){
@@ -167,7 +180,7 @@ if($need_bgm_api){
 
     }else{
         //失败
-        \access\send_msg($type,$to,"条目 ".$subject_id." 收藏失败...",constant('token'));
+        \access\send_msg($type,$to,"条目 ".$subject_name.'['.$subject_id."] 收藏失败...",constant('token'));
     }
 
 }
