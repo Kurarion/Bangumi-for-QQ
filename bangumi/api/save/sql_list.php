@@ -142,11 +142,16 @@ if($row!=false){
                             //
                             if($aired_subject_eps==$su_ep)
                             {
-                                for($user_watched_msg.="Δ",$j=1;$j<$su_ep-1;++$j)
-                                {
-                                    $user_watched_msg.="-Δ";
+                                if($su_ep!=1){
+                                    for($user_watched_msg.="Δ",$j=1;$j<$su_ep-1;++$j)
+                                    {
+                                        $user_watched_msg.="-Δ";
+                                    }
+                                    $user_watched_msg.="-₳";
+                                }else{
+                                    $user_watched_msg.="₳";
                                 }
-                                $user_watched_msg.="-₳";
+
                             }
                             else
                             {
@@ -409,11 +414,16 @@ if($row!=false){
                             //
                             if($aired_subject_eps==$su_ep)
                             {
-                                for($user_watched_msg.="Δ",$j=1;$j<$su_ep-1;++$j)
-                                {
-                                    $user_watched_msg.="-Δ";
+                                if($su_ep!=1){
+                                    for($user_watched_msg.="Δ",$j=1;$j<$su_ep-1;++$j)
+                                    {
+                                        $user_watched_msg.="-Δ";
+                                    }
+                                    $user_watched_msg.="-₳";
+                                }else{
+                                    $user_watched_msg.="₳";
                                 }
-                                $user_watched_msg.="-₳";
+
                             }
                             else
                             {
