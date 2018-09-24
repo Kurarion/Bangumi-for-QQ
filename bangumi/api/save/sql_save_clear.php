@@ -34,15 +34,19 @@ if(false!==$site){
     }
     $subject_id=\access\read_save($type,$to,$from,$decode_subject_id);
     //\access\send_msg($type,$to,$subject_id." sui",constant('token'));
+}else{
+    //省略参数
+    $subject_id=\access\get_last_subject($type,$to,$from);
 }
-//获得所有的SaveID
-$get_save_sql="select *
+if($subject_id!=0){
+    //获得所有的SaveID
+    $get_save_sql="select *
                               from bgm_subject_memory
                               where user_qq=$from";
-$result=\access\sql_query($type,$to,$get_save_sql);
-$row=mysqli_fetch_array($result,MYSQLI_NUM);
-//循环检查
-for($i=1;$i<constant("max_list");++$i){
+    $result=\access\sql_query($type,$to,$get_save_sql);
+    $row=mysqli_fetch_array($result,MYSQLI_NUM);
+    //循环检查
+    for($i=1;$i<constant("max_list");++$i){
     if($subject_id==$row[$i]){
         //请求~sql_save.php
         $save_id=$i;
@@ -51,6 +55,8 @@ for($i=1;$i<constant("max_list");++$i){
         file_get_contents($save_url);
     }
 }
+}
+
 
 //回复qq消息
 if($need_reply)
