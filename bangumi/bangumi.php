@@ -168,6 +168,12 @@ switch ($low_msg[1]){
             $subject_comment=$size>5?$para[5]:null;
             //echo $para;
             $php.="subject_id=".$subject_id."&subject_col=".$subject_col."&subject_detail=".$subject_detail."&subject_rating=".$subject_rating."&subject_comment=".$subject_comment."&";
+        }elseif(1==strpos($low_msg,"cl")){
+            $php.="/save/sql_save_clear.php?";
+            $para=explode(" ",$msg);
+            $size=count($para);
+            $subject_id=$size>1?urlencode($para[1]):null;
+            $php.="subject_id=".$subject_id."&";
         }else{
             //die();
             $re_msg[0]['data']['text']="~co 可以收藏指定条目哦~".
@@ -221,7 +227,8 @@ switch ($low_msg[1]){
         break;
     case 'h':
         $re_msg[0]['data']['text']="你需要帮助么？".
-                                    "\n但是我不告诉你~也许类似这样随便试试我会告诉你...";
+                                    "\n类似这样首字母可以获得相关使用方法...".
+                                    "\n更详细的可以阅读指南: http://www.irisu.cc/bangumi";
         $dead=true;
         break;
     case 'r':
