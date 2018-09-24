@@ -68,6 +68,27 @@ $had_user_sql="select * from bgm_subject_memory where user_qq=$from";
 //只有搜索失败才会$result=false，空值为true
 $select_result=\access\sql_query($type,$to,$had_user_sql);
 $row=mysqli_fetch_array($select_result,MYSQLI_ASSOC);
+if($save_id=="/")
+{
+		//qq回复msg
+		$re_msg="用户 [".$from.']';
+	    //遍历查找空位
+        $black_msg=null;
+        for($h=1;$h<constant("max_list");++$h)
+        {
+
+            if($row["subject_".$h]==0)
+                $black_msg.='['.$h.'] ';
+        }
+        if($black_msg!=null)
+        {
+            $re_msg.="\n背包空位: ".$black_msg;
+        }
+        //发送消息
+        \access\send_msg($type,$to,$re_msg,constant('token'));
+        //结束php
+        die();
+}
 //如果不是空的，表示这是可行的
 if($row!=false){
     //如果指定正确的Id
@@ -237,7 +258,7 @@ if($row!=false){
         }
         if($black_msg!=null)
         {
-            $re_msg.="\n空位:".$black_msg."\n";
+            $re_msg.="\n空位: ".$black_msg."\n";
         }
         for($send_msg_id=0;$send_continue&&$send_msg_id<constant("max_list")/constant("max_num");++$send_msg_id){
             //默认是全列

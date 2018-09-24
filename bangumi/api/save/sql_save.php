@@ -27,6 +27,8 @@ $re_msg="这参数...\n真想让你好好看看《Bangumi娘的食用方法》..
 $para_ok=false;
 $have_before="";
 $old_id=0;
+//使用~sa XXXX 0
+$last_subject=false;
 //\access\send_msg($type,$to,$subject_id."  ".$save_id,constant('token'));
 //如果第一个参数不是数字 而是list
 if(false!==strpos($subject_id,"#")&&$save_id!=null){
@@ -133,9 +135,55 @@ if($save_id==null||!is_numeric($save_id)){
 
         }
     }
+    //只有两个参数时，才能使用~sa XXXX 0
+    if($save_id!=null&&$save_id==0){
+            $old_id=\access\read_save($type,$to,$from,$save_id);
+            //如果不是空的，表示这是可行的
+            if($old_id!==false){
+                if($old_id!=0){
+
+                    //$have_before="（原存放ID为 $old_id ）";
+                }
+                $last_subject=true;
+                $para_ok=true;
+            }else{
+                $re_msg="不考虑成为魔法少女么？";
+            }
+    }
 }
 if($para_ok){
-//
+
+    $have_before=null;
+
+    if($last_subject){
+
+        //更新Last subject
+        $set_last_subject_sql="UPDATE bgm_users
+        SET user_last_searched=$subject_id
+        WHERE user_qq=$from";
+        $result=\access\sql_query($type,$to,$set_last_subject_sql);
+        //new id
+        if($subject_id!=0){
+            //请求bangumi api
+            $url='https://api.bgm.tv/subject/'.$subject_id;
+            //bangumi JSON
+            $json=file_get_contents($url);
+            $data=json_decode($json,true);
+
+        }
+        //have before
+        if($old_id!=0){
+            //请求bangumi api
+            $url0='https://api.bgm.tv/subject/'.$old_id;
+            //bangumi JSON
+            $json0=file_get_contents($url0);
+            $data0=json_decode($json0,true);
+
+            $have_before='（原存放 '.($data0['name_cn']!=null?$data0['name_cn']:'').($data0['name']!=null?('('.$data0['name'].')'):'').'['.$old_id.'] ）';
+        }
+    }
+    else{
+    //正常使用
     $get_save_sql="select List_Name
                               from bgm_subject_memory
                               where user_qq=$from";
@@ -151,7 +199,7 @@ if($para_ok){
     $replacement='#>'.$search_id.'<#'.$search_id;
 
     if($subject_id!=0){
-                //请求bangumi api
+        //请求bangumi api
         $url='https://api.bgm.tv/subject/'.$subject_id;
         //bangumi JSON
         $json=file_get_contents($url);
@@ -184,6 +232,9 @@ if($para_ok){
 
             $have_before='（原存放 '.$old_id_name.'['.$old_id.'] ）';
         }
+
+    }
+    
     if($result!=false){
         $re_msg="确认 ".($data['name_cn']!=null?$data['name_cn']:'').($data['name']!=null?('('.$data['name'].')'):'').'['.$subject_id."] 收入至 ".$save_id." 位！".$have_before;
                 //"\n$set_save_sql";
