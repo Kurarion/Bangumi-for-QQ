@@ -31,11 +31,18 @@ $old_id=0;
 $last_subject=false;
 //\access\send_msg($type,$to,$subject_id."  ".$save_id,constant('token'));
 //如果第一个参数不是数字 而是list
-if(false!==strpos($subject_id,"#")&&$save_id!=null){
-    $decode_subject_id=$subject_id[strpos($subject_id,"#")+1];
-    $maybe_second_id=$subject_id[strpos($subject_id,"#")+2];
+
+$site=strrpos($subject_id,"#");
+if(false!==$site&&$save_id!=null){
+    $decode_subject_id=$subject_id[$site+1];
+    $maybe_second_id=$subject_id[$site+2];
     if(is_numeric($maybe_second_id)){
         $decode_subject_id=$decode_subject_id*10+$maybe_second_id;
+    }
+    if(is_numeric($decode_subject_id)&&$decode_subject_id>=0&&$decode_subject_id<constant("max_list")){
+
+    }else{
+        $decode_subject_id=substr($subject_id,$site+1);
     }
     $subject_id=\access\read_save($type,$to,$from,$decode_subject_id);
     //\access\send_msg($type,$to,$subject_id." sui",constant('token'));
