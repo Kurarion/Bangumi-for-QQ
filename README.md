@@ -14,7 +14,7 @@ Bangumi娘是基于 <a href="https://github.com/richardchien/coolq-http-api" tar
 
 GitHub说明文档: <a href="Bangumi娘的食用指南.md">Bangumi娘的食用指南</a>
 
-网页说明文档: <a href="http://www.irisu.cc/bangumi/" target="_blank">Bangumi娘的食用指南</a>
+网页说明文档: <a href="http://www.irisu.cc/bangumi/" target="_blank">Bangumi娘的食用指南</a>/<a href="https://kurarion.github.io/Bangumi-for-QQ/" target="_blank">Bangumi娘的食用指南[github.io]</a>
 
 ### 食用Bangumi娘
 
