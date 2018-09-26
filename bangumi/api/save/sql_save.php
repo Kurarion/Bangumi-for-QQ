@@ -144,13 +144,14 @@ if($save_id==null||!is_numeric($save_id)){
     }
     //只有两个参数时，才能使用~sa XXXX 0
     if($save_id!=null&&$save_id==0){
-            $old_id=\access\read_save($type,$to,$from,$save_id);
+            $old_id=\access\get_last_subject($type,$to,$from);
             //如果不是空的，表示这是可行的
             if($old_id!==false){
                 if($old_id!=0){
 
                     //$have_before="（原存放ID为 $old_id ）";
                 }
+                //\access\send_msg($type,$to,$save_id.'   '.$old_id,constant('token'));
                 $last_subject=true;
                 $para_ok=true;
             }else{
