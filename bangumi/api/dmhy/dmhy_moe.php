@@ -189,16 +189,26 @@ if($user_info!=false){
                     ."\n";
                 //回复标志位
                 $need_reply=true;
+                $decode_keyword=urlencode($keyword);
                 if($dmhy_moe){
                     //DMHY RSS
-                    $url='https://share.dmhy.org/topics/rss/rss.xml?keyword='.urlencode($keyword);
+                    $url='https://share.dmhy.org/topics/rss/rss.xml?keyword='.$decode_keyword;
                 }else{
                     //Moe RSS
-                    $url='https://bangumi.moe/rss/search/'.urlencode($keyword);
+                    $url='https://bangumi.moe/rss/search/'.$decode_keyword;
                 }
 
+                //file name
+                //$file_name="./RSS/{$decode_keyword}.xml";
+                //file get
+                $rss_file=file_get_contents($url,0,null,0,120000);
+                //file_put_contents('test.xml',$rss_file);
+                $last_item=strrpos($rss_file,"<item>");
+                $rss_file=substr($rss_file,0,($last_item))."</channel></rss>";
 
-                if($xml=simplexml_load_file($url)){
+                //$rss_file=file_get_contents($file_name);
+                //file_put_contents($file_name,$rss_file);
+                if($xml=simplexml_load_string($rss_file)){
                     //将 SimpleXMLElement 转化为普通数组
                     //$jsonStr = json_encode($xml);
                     //$xmlArray = json_decode($jsonStr,true);

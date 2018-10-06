@@ -75,16 +75,35 @@ for($i=0;$i<count($send_users);++$i){
         ."\n";
     //回复标志位
     $need_reply=true;
+    $decode_keyword=urlencode($keyword);
     if($dmhy_moe){
         //DMHY RSS
-        $url='https://share.dmhy.org/topics/rss/rss.xml?keyword='.urlencode($keyword);
+        $url='https://share.dmhy.org/topics/rss/rss.xml?keyword='.$decode_keyword;
     }else{
         //Moe RSS
-        $url='https://bangumi.moe/rss/search/'.urlencode($keyword);
+        $url='https://bangumi.moe/rss/search/'.$decode_keyword;
     }
 
-
-    if($xml=simplexml_load_file($url)){
+    //file name
+    $file_name="./RSS/{$decode_keyword}.xml";
+    //读取或更新
+    $rss_file=null;
+    //$last_mtime=filemtime($file_name);
+    $current_time=date("U");
+    //\access\send_msg($type,597320012 ,$last_mtime.'   '.$current_time,constant('token'));
+    if(file_exists($file_name)&&($current_time-filemtime($file_name))<500){
+    	
+    	$rss_file=file_get_contents($file_name);
+    }else{
+	    //file get
+	    $rss_file=file_get_contents($url,0,null,0,120000);
+	    //file_put_contents('test.xml',$rss_file);
+	    $last_item=strrpos($rss_file,"<item>");
+	    $rss_file=substr($rss_file,0,($last_item))."</channel></rss>";
+	    file_put_contents($file_name,$rss_file);
+    }
+    //load xml
+    if($xml=simplexml_load_string($rss_file)){
         //将 SimpleXMLElement 转化为普通数组
         //$jsonStr = json_encode($xml);
         //$xmlArray = json_decode($jsonStr,true);
