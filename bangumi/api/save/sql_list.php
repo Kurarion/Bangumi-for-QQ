@@ -15,7 +15,7 @@ else {
     constant('password')==$_GET['access']?:die("error auth");
     echo "access";
 }
-$type='send_'.$_GET['type'].'_msg';
+$type="send_{$_GET['type']}_msg";
 $to=$_GET['to'];
 $from=$_GET['from'];
 //一次发送几个
@@ -71,18 +71,18 @@ $row=mysqli_fetch_array($select_result,MYSQLI_ASSOC);
 if($save_id=="/")
 {
 		//qq回复msg
-		$re_msg="用户 [".$from.']';
+		$re_msg="用户 [{$from}]";
 	    //遍历查找空位
         $black_msg=null;
         for($h=1;$h<constant("max_list");++$h)
         {
 
-            if($row["subject_".$h]==0)
-                $black_msg.='['.$h.'] ';
+            if($row["subject_{$h}"]==0)
+                $black_msg.="[{$h}] ";
         }
         if($black_msg!=null)
         {
-            $re_msg.="\n背包空位: ".$black_msg;
+            $re_msg.="\n背包空位: {$black_msg}";
         }
         //发送消息
         \access\send_msg($type,$to,$re_msg,constant('token'));
@@ -93,28 +93,40 @@ if($save_id=="/")
 if($row!=false){
     //如果指定正确的Id
     if($save_id>0&&$save_id<constant("max_list")){
+        //subject_id
+        $subject_id=$row["subject_{$save_id}"];
         //请求bangumi api
-        $url='https://api.bgm.tv/subject/'.$row["subject_".$save_id];
+        $url="https://api.bgm.tv/subject/$subject_id";
         //bangumi JSON
         $json=file_get_contents($url);
         $data=json_decode($json,true);
 
         //https://api.bgm.tv/subject/109956
-        $re_msg=($data['images']['large']!=null?("[CQ:image,file=".$data['images']['large']."]"):"").
-                "\n[List]<$save_id>: ".$row["subject_".$save_id].
-                ($data['name_cn']!=""?"\n中文名:  ".$data['name_cn']:("")).
-                ($data['name']!=""?("\n原名:  ".$data['name']):("")).
-                ($data['type']!=""?("\n类型:  ".$type2name[$data['type']]):("")).
-                (($data['air_date']=="0000-00-00"||$data['air_date']==null)?"":("\n放送日期:  ".$data['air_date'])).
-                ($data['air_weekday']==null?"":("\n放送星期:  ".$int2weekday[$data['air_weekday']])).
-                ($data['url']!=""?("\nUrl:  ".$data['url']):(""));
+        $re_msg1=$data['images']['large']!=null?"[CQ:image,file={$data['images']['large']}]":"";
+        $re_msg2="\n[List]<$save_id>: $subject_id";
+        $re_msg3=$data['name_cn']!=""?"\n中文名:  {$data['name_cn']}":"";
+        $re_msg4=$data['name']!=""?"\n原名:  {$data['name']}":"";
+        $type2name_result=$type2name[$data['type']];
+        $re_msg5=$data['type']!=""?"\n类型:  {$type2name_result}":"";
+        $re_msg6=$data['air_date']=="0000-00-00"||$data['air_date']==null?"":"\n放送日期:  {$data['air_date']}";
+
+        if($data['air_weekday']==null){
+            $re_msg7=null;
+        }else{
+            $int2weekday_result=$int2weekday[$data['air_weekday']];
+            $re_msg7="\n放送星期:   $int2weekday_result";
+        }
+        
+        $re_msg8=$data['url']!=""?"\nUrl:  {$data['url']}":"";
+
+        $re_msg="{$re_msg1}{$re_msg2}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}";
         //此处添加用户对条目的信息
         //$user_access_token=\access\get_access_token($type,$to,$from);
         if($user_access_token!=false){
             //有token
             //请求bangumi api
 
-            $url_user='https://api.bgm.tv/collection/'.$row["subject_".$save_id]."?access_token=".$user_access_token;
+            $url_user='https://api.bgm.tv/collection/'.$row["subject_".$save_id]."?access_token={$user_access_token}";
             //bangumi JSON
             $json_user=file_get_contents($url_user);
             $data_user=json_decode($json_user,true);
@@ -140,9 +152,9 @@ if($row!=false){
                 $subject_rating=$data['rating'];
                 $subject_air_date=$data['air_date'];
 
-                $final_subject_rating=$subject_rating['score']==null?"":"<平均: ".$subject_rating['score'].">";
+                $final_subject_rating=$subject_rating['score']==null?"":"<平均: {$subject_rating['score']}>";
                 $final_subject_eps=$subject_eps==null?"??":$subject_eps;
-                $user_rating_msg=$su_rating==0?"":"\n评分:  $su_rating   ".$final_subject_rating;
+                $user_rating_msg=$su_rating==0?"":"\n评分:  $su_rating   {$final_subject_rating}";
                 $user_comment_msg=$su_comment==""?"":"\n吐槽:  $su_comment";
                 $user_watched_msg=$su_ep==0?"":"\n完成度: $su_ep/$final_subject_eps \n";
                 if($su_ep!=0){
@@ -198,11 +210,7 @@ if($row!=false){
 
                         }
                 // 的第 [".$su_status['id']."] 个"
-                $user_subject_submsg="\n[".$su_user_nick."] 收藏为 [".$su_status['name']."]".
-                    $user_watched_msg.
-                    $user_rating_msg.
-                    $user_comment_msg.
-                    "\n".$su_user_nick." 的主页:  ".$su_user_url;
+                $user_subject_submsg="\n[{$su_user_nick}] 收藏为 [{$su_status['name']}]{$user_watched_msg}{$user_rating_msg}{$user_comment_msg}\n{$su_user_nick} 的主页:  {$su_user_url}";
 //                $user_subject_msg=array(
 //                    array('type'=>"text",
 //                        'data'=>array(
@@ -220,7 +228,7 @@ if($row!=false){
 //                        )
 //                    )
 //                );
-                $user_subject_msg="\n\n[CQ:image,file=".$su_user_avatar."]".$user_subject_submsg;
+                $user_subject_msg="\n\n[CQ:image,file={$su_user_avatar}]$user_subject_submsg";
             }
             else{
                 $user_subject_submsg="\n\n<未收藏>";
@@ -253,12 +261,12 @@ if($row!=false){
         for($h=1;$h<constant("max_list");++$h)
         {
 
-            if($row["subject_".$h]==0)
-                $black_msg.='['.$h.'] ';
+            if($row["subject_{$h}"]==0)
+                $black_msg.="[{$h}] ";
         }
         if($black_msg!=null)
         {
-            $re_msg.="\n空位: ".$black_msg."\n";
+            $re_msg.="\n空位: {$black_msg}\n";
         }
         for($send_msg_id=0;$send_continue&&$send_msg_id<constant("max_list")/constant("max_num");++$send_msg_id){
             //默认是全列
@@ -271,13 +279,14 @@ if($row!=false){
                     $send_continue=false;
                 }
                 //排除空位list
-                if($row["subject_".$i]==0){
+                if($row["subject_{$i}"]==0){
                     continue;
                 }else{
                     //$num+=1;
                 }
                 //请求bangumi api
-                $url='https://api.bgm.tv/subject/'.$row["subject_".$i];
+                $subject_id=$row["subject_{$i}"];
+                $url="https://api.bgm.tv/subject/{$subject_id}";
                 //bangumi JSON
                 $json=file_get_contents($url);
                 $data=json_decode($json,true);
@@ -290,7 +299,7 @@ if($row!=false){
                 $data_user=null;
                 if($user_access_token!=false)
                 {
-                        $url_user='https://api.bgm.tv/collection/'.$row["subject_".$i]."?access_token=".$user_access_token;
+                        $url_user="https://api.bgm.tv/collection/{$subject_id}?access_token={$user_access_token}";
                         //bangumi JSON
                         $json_user=file_get_contents($url_user);
                         $data_user=json_decode($json_user,true);
@@ -301,11 +310,13 @@ if($row!=false){
                         if($data_user['ep_status']!=null&&$data['eps_count']!=null&&$data_user['ep_status']>=$data['eps_count'])
                         {
                             $save_id=$i;
-                            $save_url="http://127.0.0.1/bangumi/api/save/sql_save.php?subject_id=0&save_id=".$save_id."&type=".$_GET['type']."&to=".$to."&from=".$from."&access=".constant("password");
+                            $save_url="http://127.0.0.1/bangumi/api/save/sql_save.php?subject_id=0&save_id={$save_id}&type={$_GET['type']}&to={$to}&from={$from}&access=".constant("password");
 
                             file_get_contents($save_url);
                             //提示用户 另发送
-                            \access\send_msg($type,$to,"发现[".$i."]号位".($data['name_cn']==null?'':('['.$data['name_cn'].($data['name']==null?'':('('.$data['name'].')')).']'))."已完成，清零之~",constant('token'));
+                            $subject_last_name=$data['name']==null?'':("({$data['name']})");
+                            $subject_name=$data['name_cn']==null?'':("[{$data['name_cn']}]{$subject_last_name}");
+                            \access\send_msg($type,$to,"发现[{$i}]号位{$subject_name}已完成，清零之~",constant('token'));
                             //
                             continue;
                         }
@@ -321,7 +332,8 @@ if($row!=false){
                         if(($day+$list_day)%7==0){
                             if((1+intval($day/7.0))<=$data['eps_count']||$data['eps_count']==null)
                             {
-                                $re_msg.="<".$int2weekday[$list_current_day].">\n";
+                                $int2weekday_result=$int2weekday[$list_current_day];
+                                $re_msg.="<{$int2weekday_result}>\n";
                             }
                             else
                             {
@@ -375,14 +387,33 @@ if($row!=false){
                 //
                 $num+=1;
                 //https://api.bgm.tv/subject/109956
-                $re_msg.=($data['images']['large']!=null&&$list_detail?("[CQ:image,file=".$data['images']['large']."]"):"").
-                    "\n[List]<$i>: ".$row["subject_".$i].
-                    ($data['name_cn']!=""?"\n中文名:  ".$data['name_cn']:("")).
-                    ($data['name']!=""?("\n原名:  ".$data['name']):("")).
-                    ($data['type']!=""?("\n类型:  ".$type2name[$data['type']]):("")).
-                    (($data['air_date']=="0000-00-00"||$data['air_date']==null)?"":("\n放送日期:  ".$data['air_date'])).
-                    ($data['air_weekday']==null?"":("\n放送星期:  ".$int2weekday[$data['air_weekday']])).
-                    ($data['url']!=""?("\nUrl:  ".$data['url']):(""));
+                // $re_msg.=($data['images']['large']!=null&&$list_detail?("[CQ:image,file=".$data['images']['large']."]"):"").
+                //     "\n[List]<$i>: ".$row["subject_".$i].
+                //     ($data['name_cn']!=""?"\n中文名:  ".$data['name_cn']:("")).
+                //     ($data['name']!=""?("\n原名:  ".$data['name']):("")).
+                //     ($data['type']!=""?("\n类型:  ".$type2name[$data['type']]):("")).
+                //     (($data['air_date']=="0000-00-00"||$data['air_date']==null)?"":("\n放送日期:  ".$data['air_date'])).
+                //     ($data['air_weekday']==null?"":("\n放送星期:  ".$int2weekday[$data['air_weekday']])).
+                //     ($data['url']!=""?("\nUrl:  ".$data['url']):(""));
+                //\access\send_msg($type,$to,"i=".$i."  num=".$num,constant('token'));
+                $re_msg1=$data['images']['large']!=null&&$list_detail?"[CQ:image,file={$data['images']['large']}]":"";
+                $re_msg2="\n[List]<$i>: $subject_id";
+                $re_msg3=$data['name_cn']!=""?"\n中文名:  {$data['name_cn']}":"";
+                $re_msg4=$data['name']!=""?"\n原名:  {$data['name']}":"";
+                $type2name_result=$type2name[$data['type']];
+                $re_msg5=$data['type']!=""?"\n类型:  {$type2name_result}":"";
+                $re_msg6=($data['air_date']=="0000-00-00"||$data['air_date']==null)?"":"\n放送日期:  {$data['air_date']}";
+
+                if($data['air_weekday']==null){
+                    $re_msg7=null;
+                }else{
+                    $int2weekday_result=$int2weekday[$data['air_weekday']];
+                    $re_msg7="\n放送星期:   $int2weekday_result";
+                }
+                
+                $re_msg8=$data['url']!=""?"\nUrl:  {$data['url']}":"";
+
+                $re_msg.="{$re_msg1}{$re_msg2}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}";
                 //此处添加用户对条目的信息
                 //$user_access_token=\access\get_access_token($type,$to,$from);
                 if($user_access_token!=false){
@@ -417,9 +448,14 @@ if($row!=false){
                         $subject_rating=$data['rating'];
                         //$subject_air_date=$data['air_date'];
 
-                        $final_subject_rating=$subject_rating['score']==null?"":"<平均: ".$subject_rating['score'].">";
+                        // $final_subject_rating=$subject_rating['score']==null?"":"<平均: ".$subject_rating['score'].">";
+                        // $final_subject_eps=$subject_eps==null?"??":$subject_eps;
+                        // $user_rating_msg=$su_rating==0?"":"\n评分:  $su_rating   ".$final_subject_rating;
+                        // $user_comment_msg=$su_comment==""?"":"\n吐槽:  $su_comment";
+                        // $user_watched_msg=$su_ep==0?"":"\n完成度: $su_ep/$final_subject_eps \n";
+                        $final_subject_rating=$subject_rating['score']==null?"":"<平均: {$subject_rating['score']}>";
                         $final_subject_eps=$subject_eps==null?"??":$subject_eps;
-                        $user_rating_msg=$su_rating==0?"":"\n评分:  $su_rating   ".$final_subject_rating;
+                        $user_rating_msg=$su_rating==0?"":"\n评分:  $su_rating   {$final_subject_rating}";
                         $user_comment_msg=$su_comment==""?"":"\n吐槽:  $su_comment";
                         $user_watched_msg=$su_ep==0?"":"\n完成度: $su_ep/$final_subject_eps \n";
                         if($su_ep!=0){
@@ -471,11 +507,10 @@ if($row!=false){
 
                         }
                         // 的第 [".$su_status['id']."] 个"
-                        $user_subject_submsg="\n\n[".$su_user_nick."] 收藏为 [".$su_status['name']."]".
-                            $user_watched_msg.
-                            $user_rating_msg.
-                            $user_comment_msg.
-                            ($list_detail?("\n".$su_user_nick." 的主页:  ".$su_user_url):"");
+                        $user_subject_submsg="\n\n[{$su_user_nick}] 收藏为 [{$su_status['name']}]{$user_watched_msg}{$user_rating_msg}{$user_comment_msg}";
+                        if($list_detail){
+                            $user_subject_submsg.="\n{$su_user_nick} 的主页:  {$su_user_url}";
+                        }
                         $user_subject_msg=$user_subject_submsg;
                     }
                     else{
@@ -485,7 +520,7 @@ if($row!=false){
                     $user_subject_msg.= "\n----------------\n";
                     //\access\send_msg($type,$to,"i=".$i." \n".$url_user,constant('token'));
                     //global $re_msg;
-                    $re_msg=$re_msg.$user_subject_msg;
+                    $re_msg.=$user_subject_msg;
 
 
                 }

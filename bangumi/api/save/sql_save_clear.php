@@ -12,7 +12,7 @@ else {
 }
 //接受参数
 $subject_id=$_GET['subject_id'];
-$type='send_'.$_GET['type'].'_msg';
+$type="send_{$_GET['type']}_msg";
 $to=$_GET['to'];
 $from=$_GET['from'];
 //回复
@@ -50,7 +50,7 @@ if($subject_id!=0){
     if($subject_id==$row[$i]){
         //请求~sql_save.php
         $save_id=$i;
-        $save_url="http://127.0.0.1/bangumi/api/save/sql_save.php?subject_id=0&save_id=".$save_id."&type=".$_GET['type']."&to=".$to."&from=".$from."&access=".constant("password");
+        $save_url="http://127.0.0.1/bangumi/api/save/sql_save.php?subject_id=0&save_id={$save_id}&type={$_GET['type']}&to={$to}&from={$from}&access=".constant("password");
         $need_reply=false;
         file_get_contents($save_url);
     }

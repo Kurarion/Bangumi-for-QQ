@@ -18,7 +18,7 @@ else {
 //接受参数
 $subject_id=$_GET['subject_id'];
 $save_id=$_GET['save_id'];
-$type='send_'.$_GET['type'].'_msg';
+$type="send_{$_GET['type']}_msg";
 $to=$_GET['to'];
 $from=$_GET['from'];
 //回复，合法标志
@@ -173,7 +173,7 @@ if($para_ok){
         //new id
         if($subject_id!=0){
             //请求bangumi api
-            $url='https://api.bgm.tv/subject/'.$subject_id;
+            $url="https://api.bgm.tv/subject/{$subject_id}";
             //bangumi JSON
             $json=file_get_contents($url);
             $data=json_decode($json,true);
@@ -187,7 +187,8 @@ if($para_ok){
             $json0=file_get_contents($url0);
             $data0=json_decode($json0,true);
 
-            $have_before='（原存放 '.($data0['name_cn']!=null?$data0['name_cn']:'').($data0['name']!=null?('('.$data0['name'].')'):'').'['.$old_id.'] ）';
+            $before_name=($data0['name_cn']!=null?$data0['name_cn']:'').($data0['name']!=null?("({$data0['name']})"):'');
+            $have_before="（原存放 {$before_name}[{$old_id}] ）";
         }
     }
     else{
@@ -204,7 +205,7 @@ if($para_ok){
     $search_id=$save_id>9?$save_id:('0'.$save_id);
     $front_site=strpos($old_name,'#>'.$search_id);
     $back_site=strpos($old_name,'<#'.$search_id)+4;
-    $replacement='#>'.$search_id.'<#'.$search_id;
+    $replacement="#>{$search_id}<#{$search_id}";
 
     if($subject_id!=0){
         //请求bangumi api
@@ -213,7 +214,7 @@ if($para_ok){
         $json=file_get_contents($url);
         $data=json_decode($json,true);
 
-        $replacement='#>'.$search_id.$data['name_cn'].'('.$data['name'].')<#'.$search_id;
+        $replacement="#>{$search_id}{$data['name_cn']}({$data['name']})<#{$search_id}";
     }
     
     if($front_site!==false){
@@ -238,13 +239,14 @@ if($para_ok){
             }
             
 
-            $have_before='（原存放 '.$old_id_name.'['.$old_id.'] ）';
+            $have_before="（原存放 {$old_id_name}[{$old_id}] ）";
         }
 
     }
     
     if($result!=false){
-        $re_msg="确认 ".($data['name_cn']!=null?$data['name_cn']:'').($data['name']!=null?('('.$data['name'].')'):'').'['.$subject_id."] 收入至 ".$save_id." 位！".$have_before;
+        $new_name=($data['name_cn']!=null?$data['name_cn']:'').($data['name']!=null?"({$data['name']})":'')."[{$subject_id}]";
+        $re_msg="确认 {$new_name} 收入至 {$save_id} 位！ {$have_before}";
                 //"\n$set_save_sql";
     }else{
         $re_msg="save error...";//.$old_name." dddd ".$replacement." xxxx ".$new_name
