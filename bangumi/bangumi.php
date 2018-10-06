@@ -79,7 +79,7 @@ switch ($low_msg[1]){
             $size=count($para);
             $username=$size>1?$para[1]:null;
             //echo $username;
-            $php.="username=".$username."&";
+            $php.="username={$username}&";
         }else if(1==strpos($low_msg,"unreg")){
             $php.="/auth/bangumi_unreg.php?";
         }else if(1==strpos($low_msg,"up")){
@@ -92,18 +92,11 @@ switch ($low_msg[1]){
             $subject_eps=$size>2?$para[2]:null;
             $subject_detail=$size>3?$para[3]:null;
             //echo $para;
-            $php.="subject_id=".$subject_id."&subject_eps=".$subject_eps."&subject_detail=".$subject_detail."&";
+            $php.="subject_id={$subject_id}&subject_eps={$subject_eps}&subject_detail={$subject_detail}&";
         }
         else{
             //die();
-            $re_msg[0]['data']['text']="比如这样: ~user ID/用户名 @#$%^?!&* 我才能看懂..."
-                                        ."\n又或者你想和我解除契约么...但我才不会告诉你是使用~unreg的！"
-                                        ."\n当然如果你是魔法少女的话，你可以使用~up 来更新条目的进度"
-                                        ."\n【----具体使用----】\n~user <参数1 *>[必填:Bangumi UID或用户名]"
-                                        ."\n~unreg <空>"
-                                        ."\n~up <参数 1 !>[可省略:所要更新的条目ID(三种方式，例如:222001,#2,“空”)]"
-                                        ."\n<参数 2 ^*>[必填:所需更新的章节数，例如:12 表示将12话及其之前的全部标记完成]"
-                                        ."\n<参数 3 ^~>[可选:是否列出条目详细的标志参数，只识别“*”，若是“*”则会自动请求一次~subject]";
+            $re_msg[0]['data']['text']="比如这样: ~user ID/用户名 @#$%^?!&* 我才能看懂...\n又或者你想和我解除契约么...但我才不会告诉你是使用~unreg的！\n当然如果你是魔法少女的话，你可以使用~up 来更新条目的进度\n【----具体使用----】\n~user <参数1 *>[必填:Bangumi UID或用户名]\n~unreg <空>\n~up <参数 1 !>[可省略:所要更新的条目ID(三种方式，例如:222001,#2,“空”)]\n<参数 2 ^*>[必填:所需更新的章节数，例如:12 表示将12话及其之前的全部标记完成]\n<参数 3 ^~>[可选:是否列出条目详细的标志参数，只识别“*”，若是“*”则会自动请求一次~subject]";
             $dead=true;
         }
         break;
@@ -119,7 +112,7 @@ switch ($low_msg[1]){
             $search_start=$size>3?$para[3]:null;
             $search_max=$size>4?($para[4]>25?25:$para[4]):null;
             //echo $para;
-            $php.="search_string=".$search_string.'&search_type='.$search_type.'&search_start='.$search_start.'&search_max='.$search_max."&";
+            $php.="search_string={$search_string}&search_type={$search_type}&search_start={$search_start}&search_max={$search_max}&";
         }else if(1==strpos($low_msg,"subject")||$low_msg[2]=="u"){
             $php.="/subject/bangumi_subject.php?";
             $para=explode(" ",$msg);
@@ -129,28 +122,17 @@ switch ($low_msg[1]){
             $subject_id=$size>1?urlencode($para[1]):null;
             $subject_group=$size>2?$para[2]:null;
             //echo $para;
-            $php.="subject_id=".$subject_id."&subject_group=".$subject_group."&";
+            $php.="subject_id={$subject_id}&subject_group={$subject_group}&";
         }else if(1==strpos($low_msg,"save")||$low_msg[2]=="a"){
             $php.="/save/sql_save.php?";
             $para=explode(" ",$msg);
             $size=count($para);
             $subject_id=$size>1?urlencode($para[1]):null;
             $save_id=$size>2?urlencode($para[2]):null;
-            $php.="subject_id=".$subject_id."&save_id=".$save_id."&";
+            $php.="subject_id={$subject_id}&save_id={$save_id}&";
         }else{
             //die();
-            $re_msg[0]['data']['text']="~subject 或 ~su 之后跟上条目ID..."
-                                        ."\n"."~search 或 ~se 之后跟上你想找的关键字(+隐藏的参数),关键字中的空格无视!但说不定UrlEncode行得通哦..."
-                                        ."\n~save 是用来给吉祥物(背包)收集魔力的（只限魔法少女哦）"
-                ."\n【----具体使用----】"
-                ."\n~search/se <参数 1 *>[必填: 想要搜索条目的关键字]"
-                ."\n<参数 2 ~>[可选: 想要搜索条目的类型，1 => 书籍, 2 => 动画, 3 => 音乐, 4 => 游戏, 6 => 三次元，默认所有类型]"
-                ."\n<参数 3 ~>[可选: 搜索结果的开始标号，默认从0开始]"
-                ."\n<参数 4 ~>[可选: 搜索结果的最大显示数(上限25个)，默认5个]"
-                ."\n~subject/su <参数 1 !>[可省略: 想要搜索的条目ID(三种方式，例如:222001, #2,“空”)]"
-                ."\n<参数 2 ~^>[可选: 条目信息的详细度参数，* => 增加收录的角色, ** => 增加收录的角色以及cv，默认只有条目信息]"
-                ."\n~save/sa <参数 1 !>[可省略: 想要保存的条目ID(三种方式，例如:222001, #2,“空”)]"
-                ."\n<参数 2 *^>[必填: 想要放入吉祥物的位置编号，1~25选一个吧，然而经常会不自觉地加一个#变成 #1-25，所以这样也没问题]";
+            $re_msg[0]['data']['text']="~subject 或 ~su 之后跟上条目ID...\n"."~search 或 ~se 之后跟上你想找的关键字(+隐藏的参数),关键字中的空格无视!但说不定UrlEncode行得通哦...\n~save 是用来给吉祥物(背包)收集魔力的（只限魔法少女哦）\n【----具体使用----】\n~search/se <参数 1 *>[必填: 想要搜索条目的关键字]\n<参数 2 ~>[可选: 想要搜索条目的类型，1 => 书籍, 2 => 动画, 3 => 音乐, 4 => 游戏, 6 => 三次元，默认所有类型]\n<参数 3 ~>[可选: 搜索结果的开始标号，默认从0开始]\n<参数 4 ~>[可选: 搜索结果的最大显示数(上限25个)，默认5个]\n~subject/su <参数 1 !>[可省略: 想要搜索的条目ID(三种方式，例如:222001, #2,“空”)]\n<参数 2 ~^>[可选: 条目信息的详细度参数，* => 增加收录的角色, ** => 增加收录的角色以及cv，默认只有条目信息]\n~save/sa <参数 1 !>[可省略: 想要保存的条目ID(三种方式，例如:222001, #2,“空”)]\n<参数 2 *^>[必填: 想要放入吉祥物的位置编号，1~25选一个吧，然而经常会不自觉地加一个#变成 #1-25，所以这样也没问题]";
             $dead=true;
         }
         break;
@@ -167,7 +149,7 @@ switch ($low_msg[1]){
             $subject_rating=$size>4?$para[4]:null;
             $subject_comment=$size>5?$para[5]:null;
             //echo $para;
-            $php.="subject_id=".$subject_id."&subject_col=".$subject_col."&subject_detail=".$subject_detail."&subject_rating=".$subject_rating."&subject_comment=".$subject_comment."&";
+            $php.="subject_id={$subject_id}&subject_col={$subject_col}&subject_detail={$subject_detail}&subject_rating={$subject_rating}&subject_comment={$subject_comment}&";
         }elseif(1==strpos($low_msg,"cl")){
             $php.="/save/sql_save_clear.php?";
             $para=explode(" ",$msg);
@@ -176,14 +158,7 @@ switch ($low_msg[1]){
             $php.="subject_id=".$subject_id."&";
         }else{
             //die();
-            $re_msg[0]['data']['text']="~co 可以收藏指定条目哦~".
-                                        "\n可选的收藏状态有{wish/collect/do/on_hold/dropped}"
-                ."\n【----具体使用----】"
-                ."\n~collect/co <参数 1 !>[可省略: 想要收藏的条目ID(三种方式，例如:222001, #2,“空”)]"
-                ."\n<参数 2 ^*>[必填: 想要收藏的状态，wish => 想看/玩/听/读, collect => 看/玩/听/读过, do => 在看/玩/听/读, on_hold => 搁置, dropped => 抛弃，输入有误或为空则为wish]"
-                ."\n<参数 3 ^~>[可选: 是否列出条目详细的标志参数，只识别“*”，若是“*”则会自动请求一次~subject]"
-                ."\n<参数 4 ^^~>[可选: 想要给此条目的评分，1-10，否则没有打分]"
-                ."\n<参数 5 ^^~>[可选: 想要对此条目的吐槽，请注意空格问题]";
+            $re_msg[0]['data']['text']="~co 可以收藏指定条目哦~\n可选的收藏状态有{wish/collect/do/on_hold/dropped}\n【----具体使用----】\n~collect/co <参数 1 !>[可省略: 想要收藏的条目ID(三种方式，例如:222001, #2,“空”)]\n<参数 2 ^*>[必填: 想要收藏的状态，wish => 想看/玩/听/读, collect => 看/玩/听/读过, do => 在看/玩/听/读, on_hold => 搁置, dropped => 抛弃，输入有误或为空则为wish]\n<参数 3 ^~>[可选: 是否列出条目详细的标志参数，只识别“*”，若是“*”则会自动请求一次~subject]\n<参数 4 ^^~>[可选: 想要给此条目的评分，1-10，否则没有打分]\n<参数 5 ^^~>[可选: 想要对此条目的吐槽，请注意空格问题]";
             $dead=true;
         }
         break;
@@ -196,13 +171,10 @@ switch ($low_msg[1]){
             //echo "var_dump: ".var_dump($para[2])."\n";
             $air_date=$size>1?$para[1]:null;
             //echo $para;
-            $php.="air_date=".$air_date."&";
+            $php.="air_date={$air_date}&";
         }
         else{
-            $re_msg[0]['data']['text']="~bangumi 或 ~bgm 以外我都看不见！".
-                                        "\n如果不加参数(1-7)的话我就默认给你今天的放送表咯~"
-                ."\n【----具体使用----】"
-                ."\n~bangumi/bgm <参数 1 ~>[可选: 想要查询放送表的日期，1-7代表 星期一 到 星期天，默认给予当天的放送表]";
+            $re_msg[0]['data']['text']="~bangumi 或 ~bgm 以外我都看不见！\n如果不加参数(1-7)的话我就默认给你今天的放送表咯~\n【----具体使用----】\n~bangumi/bgm <参数 1 ~>[可选: 想要查询放送表的日期，1-7代表 星期一 到 星期天，默认给予当天的放送表]";
             $dead=true;
         }
         break;
@@ -215,20 +187,15 @@ switch ($low_msg[1]){
             //echo "var_dump: ".var_dump($para[2])."\n";
             $save_id=$size>1?urlencode($para[1]):null;
             //echo $para;
-            $php.="save_id=".$save_id."&";
+            $php.="save_id={$save_id}&";
         }
         else{
-            $re_msg[0]['data']['text']="~list 或 ~li 用来显示当前吉祥物(背包)拥有的魔力".
-                "\n当然这只能给魔法少女使用哦~"
-                ."\n【----具体使用----】"
-            ."\n~list/li <参数 1 ~>[可选: 想要搜索的背包位，范围是1-25，如果不填或有误默认全部，如果输入”*”则为有封面图版，否则只有文字]";
+            $re_msg[0]['data']['text']="~list 或 ~li 用来显示当前吉祥物(背包)拥有的魔力\n当然这只能给魔法少女使用哦~\n【----具体使用----】\n~list/li <参数 1 ~>[可选: 想要搜索的背包位，范围是1-25，如果不填或有误默认全部，如果输入”*”则为有封面图版，否则只有文字]";
             $dead=true;
         }
         break;
     case 'h':
-        $re_msg[0]['data']['text']="你需要帮助么？".
-                                    "\n类似这样首字母可以获得相关使用方法...".
-                                    "\n更详细的可以阅读指南: http://www.irisu.cc/bangumi";
+        $re_msg[0]['data']['text']="你需要帮助么？\n类似这样首字母可以获得相关使用方法...\n更详细的可以阅读指南: http://www.irisu.cc/bangumi";
         $dead=true;
         break;
     case 'r':
@@ -254,13 +221,7 @@ switch ($low_msg[1]){
                 "\nhttp://www.japanaradio.com/free/48kaacp.pls";
         }
         else{
-            $re_msg[0]['data']['text']="~radio 或 ~fm 你想说?\n".
-                                    "又或者是想用~reg 绑定bangumi账号?\n".
-                                    "但我不想猜......"
-                ."\n【----具体使用----】"
-            ."\n~reg <无>"
-            ."\n~fm <空>"
-                ."\n~radio <空>";
+            $re_msg[0]['data']['text']="~radio 或 ~fm 你想说?\n又或者是想用~reg 绑定bangumi账号?\n但我不想猜......\n【----具体使用----】\n~reg <无>\n~fm <空>\n~radio <空>";
         }
 
         $dead=true;
@@ -272,12 +233,9 @@ switch ($low_msg[1]){
             $size=count($para);
             $command=$size>1?urlencode($para[1]):null;
             $parameter=$size>2?urlencode($para[2]):null;
-            $php.="command=".$command."&parameter=".$parameter."&";
+            $php.="command={$command}&parameter={$parameter}&";
         }else{
-            $re_msg[0]['data']['text']="~dmhy是相关订阅资源的功能".
-                "\n当然这只能给魔法少女使用哦~"
-                ."\n【----具体使用----】"
-                ."\n施工中...";
+            $re_msg[0]['data']['text']="~dmhy是相关订阅资源的功能\n当然这只能给魔法少女使用哦~\n【----具体使用----】\n施工中...";
             $dead=true;
         }
         break;
@@ -290,7 +248,7 @@ switch ($low_msg[1]){
 //宣布死亡 or 传递简单消息
 if($dead)
 {
-    \access\send_msg('send_'.$type.'_msg',$from,$re_msg,constant("token"));
+    \access\send_msg("send_{$type}_msg",$from,$re_msg,constant("token"));
     die();
 }
 echo $php;
@@ -316,27 +274,27 @@ echo $php;
  * send_discuss_msg
  * */
 //考虑到可能没有前置参数，这里去掉了type之前的&，改到switch里面加入
-$php.="type=".$type;
+$php.="type={$type}";
 
 
 
 //至此 $php=./api/user/bangumi_user.php?username=???&type=private
 //加入 access to
-$php.="&to=".$from;
+$php.="&to={$from}";
 echo "\n".$php;
 //消息发送者的QQ号码
-$php.="&from=".$sub_from;
-$php.="&access=".constant("password");
+$php.="&from={$sub_from}";
+$php.='&access='.constant("password");
 echo "\n".$php;
 //至此 $php=./api/user/bangumi_user.php?username=???&type=private&to=???&access=???
 //跳转对应php处理
 
-$url='http://127.0.0.1/bangumi'.$php;
+$url="http://127.0.0.1/bangumi{$php}";
 echo "\n".$url;
 //提示开始处理
 //$re_msg[0]['data']['text']="受理中~\n但...也许会有神秘电波干扰...祈祷中...";
 $re_msg[0]['data']['text']="祈祷中...";
-\access\send_msg('send_'.$type.'_msg',$from,$re_msg,constant("token"));
+\access\send_msg("send_{$type}_msg",$from,$re_msg,constant("token"));
 file_get_contents($url);
 
 
