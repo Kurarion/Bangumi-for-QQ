@@ -46,7 +46,7 @@ function KeyDecode($keyword){
     return str_replace('+',' ',$keyword);
 }
 //接受参数
-$type='send_'.$_GET['type'].'_msg';
+$type="send_{$_GET['type']}_msg";
 $to=$_GET['to'];
 $from=$_GET['from'];
 //参数
@@ -88,7 +88,8 @@ if($user_info!=false){
             if($sql!=""){
                 $result=\access\sql_query($type,$to,$sql);
                 if($result!==false){
-                    $msg="变更成功!\n用户[ ".$from." ]当前订阅状态: ".($open?"开启":"关闭");
+                    $open_status=($open?"开启":"关闭");
+                    $msg="变更成功!\n用户[ {$from} ]当前订阅状态: {$open_status}";
                 }else{
                     $msg="发生了点小故障...订阅状态变更失败";
                 }
@@ -104,7 +105,7 @@ if($user_info!=false){
                                 WHERE user_qq=$from";
             $result=\access\sql_query($type,$to,$sql);
             if($result!==false){
-                $msg="变更成功!\n用户[ ".$from." ]当前订阅关键字: [".$keyword."]";
+                $msg="变更成功!\n用户[ {$from} ]当前订阅关键字: [{$keyword}]";
             }else{
                 $msg="发生了点小故障...订阅关键字变更失败";
             }
@@ -128,7 +129,8 @@ if($user_info!=false){
             if($sql!=""){
                 $result=\access\sql_query($type,$to,$sql);
                 if($result!==false){
-                    $msg="变更成功!\n用户[ ".$from." ]当前订阅源: ".($dmhy_moe?"萌番组":"动漫花园");
+                    $select_status=($dmhy_moe?"萌番组":"动漫花园");
+                    $msg="变更成功!\n用户[ {$from} ]当前订阅源: $select_status";
                 }else{
                     $msg="发生了点小故障...订阅源变更失败";
                 }
@@ -146,23 +148,23 @@ if($user_info!=false){
             if($row!=false){
                 switch ($parameter){
                     case'open':
-                        $msg="第[".$row['user_id']."]位魔法少女[ ".$from." ]"."\n当前订阅状态: ".($row['dmhy_open']==1?"开启":"关闭");
+                        $open_status=($row['dmhy_open']==1?"开启":"关闭");
+                        $msg="第[{$row['user_id']}]位魔法少女[ {$from} ]\n当前订阅状态: {$open_status}";
                         break;
                     case 'keyword':
-                        $msg="第[".$row['user_id']."]位魔法少女[ ".$from." ]"."\n当前订阅关键字: [".$row['dmhy_keyword']."]";
+                        $msg="第[{$row['user_id']}]位魔法少女[ {$from} ]\n当前订阅关键字: [{$row['dmhy_keyword']}]";
                         break;
                     case 'select':
-                        $msg="第[".$row['user_id']."]位魔法少女[ ".$from." ]"."\n当前订阅源: ".($row['dmhy_moe']==1?"萌番组":"动漫花园");
+                        $select_status=($row['dmhy_moe']==1?"萌番组":"动漫花园");
+                        $msg="第[{$row['user_id']}]位魔法少女[ {$from} ]\n当前订阅源: $select_status";
                         break;
                     case 'date':
-                        $msg="第[".$row['user_id']."]位魔法少女[ ".$from." ]"."\n上次更新时间: [".$row['dmhy_lastpubDate']."]";
+                        $msg="第[{$row['user_id']}]位魔法少女[ {$from} ]\n上次更新时间: [{$row['dmhy_lastpubDate']}]";
                         break;
                     default:
-                        $msg="第[".$row['user_id']."]位魔法少女[ ".$from." ]"
-                            ."\n当前订阅状态: ".($row['dmhy_open']==1?"开启":"关闭")
-                            ."\n当前订阅关键字: [".$row['dmhy_keyword']."]"
-                            ."\n当前订阅源: ".($row['dmhy_moe']==1?"萌番组":"动漫花园")
-                            ."\n上次更新时间: [".$row['dmhy_lastpubDate']."]";
+                        $open_status=($row['dmhy_open']==1?"开启":"关闭");
+                        $select_status=($row['dmhy_moe']==1?"萌番组":"动漫花园");
+                        $msg="第[{$row['user_id']}]位魔法少女[ {$from} ]\n当前订阅状态: {$open_status}\n当前订阅关键字: [{$row['dmhy_keyword']}]\n当前订阅源: $select_status\n上次更新时间: [{$row['dmhy_lastpubDate']}]";
                         break;
                 }
                 break;
@@ -183,19 +185,16 @@ if($user_info!=false){
                 //True代表dmhy,False代表Moe
                 $dmhy_moe=$user_info['dmhy_moe']==0?true:false;
                 //msg
-                $msg="第[".$id."]位魔法少女[".$from."]"
-                    ."\n关键字:\n[".$keyword."]"
-                    ."\n上次更新时间:\n[".$lastpubDate."]"
-                    ."\n";
+                $msg="第[{$id}]位魔法少女[{$from}]\n关键字:\n[{$keyword}]\n上次更新时间:\n[{$lastpubDate}]\n";
                 //回复标志位
                 $need_reply=true;
                 $decode_keyword=urlencode($keyword);
                 if($dmhy_moe){
                     //DMHY RSS
-                    $url='https://share.dmhy.org/topics/rss/rss.xml?keyword='.$decode_keyword;
+                    $url="https://share.dmhy.org/topics/rss/rss.xml?keyword=$decode_keyword";
                 }else{
                     //Moe RSS
-                    $url='https://bangumi.moe/rss/search/'.$decode_keyword;
+                    $url="https://bangumi.moe/rss/search/$decode_keyword";
                 }
 
                 //file name
@@ -227,7 +226,7 @@ if($user_info!=false){
 
                         if($channel->getName()=="item"){
                             //当前ItemMsg
-                            $currentItemMsg="\n----------------\n===编号 [ ".$itemNum." ]===";
+                            $currentItemMsg="\n----------------\n===编号 [ {$itemNum} ]===";
                             //一些参数
                             $itemOver=false;
                             //进行Item解析
@@ -236,10 +235,10 @@ if($user_info!=false){
                                 //echo $item->getName() . ": " . $item . "\n\r";
                                 switch ($item->getName()){
                                     case "title":
-                                        $currentItemMsg.="\n".$item;
+                                        $currentItemMsg.="\n$item";
                                         break;
                                     case "link":
-                                        $currentItemMsg.="\nURL:\n".$item;
+                                        $currentItemMsg.="\nURL:\n$item";
                                         break;
                                     case "pubDate":
                                         //第一个item最新
@@ -258,7 +257,7 @@ if($user_info!=false){
                                         }elseif($itemNum===1){
                                             $need_set_date=date("Y-m-d H:i:s",$time);
                                         }
-                                        $currentItemMsg.="\n--------\n发布时间: ".$currentTime;
+                                        $currentItemMsg.="\n--------\n发布时间: $currentTime";
                                         //过时消息
                                         //$itemOver=true;
                                         break;
@@ -266,9 +265,7 @@ if($user_info!=false){
                                         //$currentItemMsg.="\n描述: ".$item;
                                         $pic_url=DescriptionDecode($item);
                                         if($pic_url!==false){
-                                            $currentItemMsg="\n----------------\n"
-                                                ."[CQ:image,file=".$pic_url."]"
-                                                .$currentItemMsg;
+                                            $currentItemMsg="\n----------------\n[CQ:image,file={$pic_url}]{$currentItemMsg}";
                                         }
 
                                         break;
@@ -277,18 +274,19 @@ if($user_info!=false){
                                         if($dmhy_moe){
                                             //dmhy
                                             $magnet=explode("&",$item->attributes());
-                                            $currentItemMsg.="\n磁力链接:\n".$magnet[0];
+                                            $currentItemMsg.="\n磁力链接:\n$magnet[0]";
                                         }else{
                                             //moe
-                                            $currentItemMsg.="\n种子链接:\n".TorrentEncode($item->attributes());
+                                            $TorrentEncode_result=TorrentEncode($item->attributes());
+                                            $currentItemMsg.="\n种子链接:\n$TorrentEncode_result";
                                         }
 
                                         break;
                                     case "author":
-                                        $currentItemMsg.="\n\n发布人: [ ".$item." ]";
+                                        $currentItemMsg.="\n\n发布人: [ {$item} ]";
                                         break;
                                     case "category":
-                                        $currentItemMsg.="\n资源分类: [ ".$item." ]";
+                                        $currentItemMsg.="\n资源分类: [ {$item} ]";
                                         break;
                                     default:
                                         break;
@@ -319,9 +317,8 @@ if($user_info!=false){
                             if($need_reply){
                                 \access\send_msg($type,$to ,$msg,constant('token'));
                             }
-                            $msg="\n关键字:\n[".$keyword."]"
-                                ."\n上次更新时间:\n[".$lastpubDate."]"
-                                ."\n第[".($itemNum/constant("once_items_num")+1)."]部分\n";
+                            $part_num=$itemNum/constant("once_items_num")+1;
+                            $msg="\n关键字:\n[ {$keyword} ]\n上次更新时间:\n[{$lastpubDate}]\n第[{$part_num}]部分\n";
                         }
                     }
                     //避免没有结果时还会回复
@@ -362,4 +359,3 @@ if(!$is_update){
     \access\send_msg($type,$to,$msg,constant('token'));
 }
 
-?>

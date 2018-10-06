@@ -69,19 +69,20 @@ for($i=0;$i<count($send_users);++$i){
     //True代表dmhy,False代表Moe
     $dmhy_moe=$send_users[$i]['dmhy_moe']==0?true:false;
     //msg
-    $msg="第[".$id."]位魔法少女[".$to."]"
-        ."\n关键字:\n[".$keyword."]"
-        ."\n上次更新时间:\n[".$lastpubDate."]"
-        ."\n";
+    // $msg="第[".$id."]位魔法少女[".$to."]"
+    //     ."\n关键字:\n[".$keyword."]"
+    //     ."\n上次更新时间:\n[".$lastpubDate."]"
+    //     ."\n";
+    $msg="第[{$id}]位魔法少女[{$to}]\n关键字:\n[{$keyword}]\n上次更新时间:\n[{$lastpubDate}]\n";
     //回复标志位
     $need_reply=true;
     $decode_keyword=urlencode($keyword);
     if($dmhy_moe){
         //DMHY RSS
-        $url='https://share.dmhy.org/topics/rss/rss.xml?keyword='.$decode_keyword;
+        $url="https://share.dmhy.org/topics/rss/rss.xml?keyword=$decode_keyword";
     }else{
         //Moe RSS
-        $url='https://bangumi.moe/rss/search/'.$decode_keyword;
+        $url="https://bangumi.moe/rss/search/$decode_keyword";
     }
 
     //file name
@@ -122,7 +123,7 @@ for($i=0;$i<count($send_users);++$i){
 
             if($channel->getName()=="item"){
                 //当前ItemMsg
-                $currentItemMsg="\n----------------\n===编号 [ ".$itemNum." ]===";
+                $currentItemMsg="\n----------------\n===编号 [ {$itemNum} ]===";
                 //一些参数
                 $itemOver=false;
                 //进行Item解析
@@ -131,10 +132,10 @@ for($i=0;$i<count($send_users);++$i){
                     //echo $item->getName() . ": " . $item . "\n\r";
                     switch ($item->getName()){
                         case "title":
-                            $currentItemMsg.="\n".$item;
+                            $currentItemMsg.="\n$item";
                             break;
                         case "link":
-                            $currentItemMsg.="\nURL:\n".$item;
+                            $currentItemMsg.="\nURL:\n$item";
                             break;
                         case "pubDate":
                             //第一个item最新
@@ -153,7 +154,7 @@ for($i=0;$i<count($send_users);++$i){
                             }elseif($itemNum===1){
                                 $need_set_date=date("Y-m-d H:i:s",$time);
                             }
-                            $currentItemMsg.="\n--------\n发布时间: ".$currentTime;
+                            $currentItemMsg.="\n--------\n发布时间: $currentTime";
                             //过时消息
                             //$itemOver=true;
                             break;
@@ -161,9 +162,7 @@ for($i=0;$i<count($send_users);++$i){
                             //$currentItemMsg.="\n描述: ".$item;
                             $pic_url=DescriptionDecode($item);
                             if($pic_url!==false){
-                                $currentItemMsg="\n----------------\n"
-                                    ."[CQ:image,file=".$pic_url."]"
-                                    .$currentItemMsg;
+                                $currentItemMsg="\n----------------\n[CQ:image,file={$pic_url}]{$currentItemMsg}";
                             }
 
                             break;
@@ -172,18 +171,19 @@ for($i=0;$i<count($send_users);++$i){
                             if($dmhy_moe){
                                 //dmhy
                                 $magnet=explode("&",$item->attributes());
-                                $currentItemMsg.="\n磁力链接:\n".$magnet[0];
+                                $currentItemMsg.="\n磁力链接:\n$magnet[0]";
                             }else{
                                 //moe
-                                $currentItemMsg.="\n种子链接:\n".TorrentEncode($item->attributes());
+                                $TorrentEncode_result=TorrentEncode($item->attributes());
+                                $currentItemMsg.="\n种子链接:\n$TorrentEncode_result";
                             }
 
                             break;
                         case "author":
-                            $currentItemMsg.="\n\n发布人: [ ".$item." ]";
+                            $currentItemMsg.="\n\n发布人: [ {$item} ]";
                             break;
                         case "category":
-                            $currentItemMsg.="\n资源分类: [ ".$item." ]";
+                            $currentItemMsg.="\n资源分类: [ {$item} ]";
                             break;
                         default:
                             break;
@@ -214,9 +214,8 @@ for($i=0;$i<count($send_users);++$i){
                 if($need_reply){
                     \access\send_msg($type,$to ,$msg,constant('token'));
                 }
-                $msg="\n关键字:\n[".$keyword."]"
-                    ."\n上次更新时间:\n[".$lastpubDate."]"
-                    ."\n第[".($itemNum/constant("once_items_num")+1)."]部分\n";
+                $part_num=$itemNum/constant("once_items_num")+1;
+                $msg="\n关键字:\n[ {$keyword} ]\n上次更新时间:\n[{$lastpubDate}]\n第[{$part_num}]部分\n";
             }
         }
         //避免没有结果时还会回复
@@ -253,4 +252,3 @@ for($i=0;$i<count($send_users);++$i){
 //echo  date("Y-m-d H:i:s",$aa);
 //date('Y-m-d H:i:s');
 
-?>

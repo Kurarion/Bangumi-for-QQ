@@ -94,13 +94,14 @@ for($send_num_id=0;$send_num_id<($list_num/constant('max_num'));++$send_num_id){
                         "\n类型:  ".$subject_type."      ID: ".$subject_id.
                         "\n简介:  ".$subject_summary.
         */
-        $subject_name_cn_fin=$subject_name_cn==null?"":("\n中文名:  ".$subject_name_cn);
-        $subject_name_fin=$subject_name==null?"":("\n原名:  ".$subject_name);
+        $subject_name_cn_fin=$subject_name_cn==null?"":("\n中文名:  $subject_name_cn");
+        $subject_name_fin=$subject_name==null?"":("\n原名:  $subject_name");
         //$subject_eps_fin=$subject_eps==null?"":("\n话数:  ".$subject_eps);
-        $subject_air_date_fin=$subject_air_date=="0000-00-00"?"":("\n放送日期:  ".$subject_air_date);
-        $subject_air_weekday_fin=$subject_air_weekday==null?"":("\n放送星期:  ".$int2weekday[$subject_air_weekday]);
-        $subject_type_id_fin="\n类型:  ".$subject_type."      ID: ".$subject_id;
-        $subject_summary_fin=$subject_summary==null?"":("\n简介:  ".$subject_summary);
+        $subject_air_date_fin=$subject_air_date=="0000-00-00"?"":("\n放送日期:  $subject_air_date");
+        $int2weekday_result=$int2weekday[$subject_air_weekday];
+        $subject_air_weekday_fin=$subject_air_weekday==null?"":("\n放送星期:  $int2weekday_result");
+        $subject_type_id_fin="\n类型:  $subject_type      ID: $subject_id";
+        $subject_summary_fin=$subject_summary==null?"":("\n简介:  $subject_summary");
         //最终结果
         //$subject_msg_part_fin=$subject_name_cn_fin.$subject_name_fin.$subject_eps_fin.$subject_air_date_fin.$subject_air_weekday_fin.$subject_type_id_fin.$subject_summary_fin;
         $subject_msg_part_fin=$subject_name_cn_fin.$subject_name_fin.$subject_air_date_fin.$subject_air_weekday_fin.$subject_type_id_fin.$subject_summary_fin;
@@ -122,17 +123,7 @@ for($send_num_id=0;$send_num_id<($list_num/constant('max_num'));++$send_num_id){
 //                    "\n放送星期:  ".$subject_air_weekday.
 //                    "\n类型:  ".$subject_type."      ID: ".$subject_id.
 //                    "\n简介:  ".$subject_summary.
-                        $subject_msg_part_fin.
-                        "\n\n排名:  ".$subject_rank.
-                        "\n评分:  ".$subject_rating_average."      评分数: ".$subject_rating_num.
-                        //"\n\n想".$state."用户数:  ".$subject_collection_wish.
-                        "\n在".$state."用户数:  ".$subject_collection_doing.
-                        //"\n".$state."过用户数:  ".$subject_collection_collection.
-                        //"\n搁置用户数:  ".$subject_collection_on_hold.
-                        //"\n抛弃用户数:  ".$subject_collection_dropped.
-                        //"\n总收藏用户数:  ".$subject_collection_collection.
-                        "\n条目主页:  ".$subject_url.
-                        "\n_____\n"
+                        "{$subject_msg_part_fin}\n\n排名:  {$subject_rank}\n评分:  {$subject_rating_average}      评分数: {$subject_rating_num}\n在{$state}用户数:  {$subject_collection_doing}\n条目主页:  {$subject_url}\n_____\n"
 
                 )
             )
@@ -142,7 +133,7 @@ for($send_num_id=0;$send_num_id<($list_num/constant('max_num'));++$send_num_id){
     $end_msg=array(
         array('type'=>"text",
             'data'=>array(
-                'text'=>"\n$air_date_msg  总计:  ".$list_num."部\n\n---来自Bangumi娘的定时汇报！"
+                'text'=>"\n$air_date_msg  总计:  {$list_num}部\n\n---来自Bangumi娘的定时汇报！"
             )
         ));
     $msg=array_merge($msg,$end_msg);
@@ -153,10 +144,11 @@ for($send_num_id=0;$send_num_id<($list_num/constant('max_num'));++$send_num_id){
     $to=$argv[3];
     \access\send_msg($type,$to ,$msg,constant('token'));
     //初始化msg
+    $continue_num=($send_num_id+1);
     $msg=array(
         array('type'=>"text",
             'data'=>array(
-                'text'=>"$air_date_msg  总计:  ".$list_num."部--续<".($send_num_id+1).">\n\n"
+                'text'=>"$air_date_msg  总计:  {$list_num}部--续<{$continue_num}>\n\n"
             )
         ));
 }
@@ -164,4 +156,3 @@ for($send_num_id=0;$send_num_id<($list_num/constant('max_num'));++$send_num_id){
 
 
 
-?>
