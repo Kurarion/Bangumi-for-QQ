@@ -51,6 +51,7 @@ if($username==null||array_key_exists('error',$data))
 else{
     $user_id=$data['id'];
     $user_url=$data['url'];
+    $user_sign=$data['sign']==null?"":"\n用户签名:{$user_sign}";
     $user_username=$data['username'];
     $user_nickname=$data['nickname'];
     $user_avatar=$data['avatar']['large'];
@@ -58,7 +59,7 @@ else{
     $msg=array(
         array('type'=>"text",
             'data'=>array(
-                'text'=>"<".$user_id.">".
+                'text'=>"<{$user_id}>".
                     "\n"
             )
         ),
@@ -70,8 +71,7 @@ else{
         array('type'=>"text",
             'data'=>array(
                 'text'=>
-                    "\n".$user_nickname." @".$user_username.
-                    "\n用户主页:".$user_url
+                    "\n{$user_nickname} @{$user_username}{$user_sign}\n用户主页:{$user_url}"
             )
         )
 
@@ -79,7 +79,7 @@ else{
 }
 //send_message
 //require '../access.php';
-$type='send_'.$_GET['type'].'_msg';
+$type="send_{$_GET['type']}_msg";
 $to=$_GET['to'];
 //echo $type;
 //echo $to;
