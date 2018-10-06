@@ -15,7 +15,7 @@ $subject_id=$_GET['subject_id'];
 $re_with_cv=($_GET['subject_group']=="all"||$_GET['subject_group']=="**")?true:false;
 $subject_group=($_GET['subject_group']=="detail"||$_GET['subject_group']=="*"||$re_with_cv)?"medium":"small";
 
-$type='send_'.$_GET['type'].'_msg';
+$type="send_{$_GET['type']}_msg";
 $to=$_GET['to'];
 $from=$_GET['from'];
 //是否sql的标志
@@ -136,7 +136,7 @@ if($need_bgm_api){
     global $json;
     global $data;
     //请求bangumi api
-    $url='https://api.bgm.tv/subject/'.$subject_id.'?responseGroup='.$subject_group;
+    $url="https://api.bgm.tv/subject/{$subject_id}?responseGroup={$subject_group}";
     //bangumi JSON
     $json=file_get_contents($url);
     $data=json_decode($json,true);
@@ -770,15 +770,15 @@ else{
                     "\n类型:  ".$subject_type."      ID: ".$subject_id.
                     "\n简介:  ".$subject_summary.
     */
-    $subject_name_cn_fin=$subject_name_cn==null?"":("\n中文名:  ".$subject_name_cn);
-    $subject_name_fin=$subject_name==null?"":("\n原名:  ".$subject_name);
-    $subject_eps_fin=$subject_eps==null?"":("\n话数:  ".$subject_eps);
-    $subject_air_date_fin=$subject_air_date=="0000-00-00"?"":("\n放送日期:  ".$subject_air_date);
+    $subject_name_cn_fin=$subject_name_cn==null?"":("\n中文名:  $subject_name_cn");
+    $subject_name_fin=$subject_name==null?"":("\n原名:  $subject_name");
+    $subject_eps_fin=$subject_eps==null?"":("\n话数:  $subject_eps");
+    $subject_air_date_fin=$subject_air_date=="0000-00-00"?"":("\n放送日期:  $subject_air_date");
     $subject_air_weekday_fin=$subject_air_weekday==null?"":("\n放送星期:  ".$int2weekday[$subject_air_weekday]);
-    $subject_type_id_fin="\n类型:  ".$subject_type."      ID: ".$subject_id;
-    $subject_summary_fin=$subject_summary==null?"":("\n简介:  ".$subject_summary);
+    $subject_type_id_fin="\n类型:  $subject_type      ID: $subject_id";
+    $subject_summary_fin=$subject_summary==null?"":("\n简介:  $subject_summary");
     //最终结果
-    $subject_msg_part_fin=$subject_name_cn_fin.$subject_name_fin.$subject_eps_fin.$subject_air_date_fin.$subject_air_weekday_fin.$subject_type_id_fin.$subject_summary_fin;
+    $subject_msg_part_fin="{$subject_name_cn_fin}{$subject_name_fin}{$subject_eps_fin}{$subject_air_date_fin}{$subject_air_weekday_fin}{$subject_type_id_fin}{$subject_summary_fin}";
 
     //msg
     $msg=array(
@@ -797,16 +797,7 @@ else{
 //                    "\n放送星期:  ".$subject_air_weekday.
 //                    "\n类型:  ".$subject_type."      ID: ".$subject_id.
 //                    "\n简介:  ".$subject_summary.
-                    $subject_msg_part_fin.
-                    "\n\n排名:  ".$subject_rank.
-                    "\n评分:  ".$subject_rating_average."      评分数: ".$subject_rating_num.
-                    "\n\n想".$state."用户数:  ".$subject_collection_wish.
-                    "\n在".$state."用户数:  ".$subject_collection_doing.
-                    "\n".$state."过用户数:  ".$subject_collection_collection.
-                    "\n搁置用户数:  ".$subject_collection_on_hold.
-                    "\n抛弃用户数:  ".$subject_collection_dropped.
-                    //"\n总收藏用户数:  ".$subject_collection_collection.
-                    "\n条目主页:  ".$subject_url
+                    "$subject_msg_part_fin\n\n排名:  $subject_rank\n评分:  $subject_rating_average      评分数: $subject_rating_num\n\n想{$state}用户数:  $subject_collection_wish\n在{$state}用户数:  $subject_collection_doing\n{$state}过用户数:  $subject_collection_collection\n搁置用户数:  $subject_collection_on_hold\n抛弃用户数:  $subject_collection_dropped\n条目主页:  {$subject_url}"
 
             )
         )
@@ -817,7 +808,7 @@ else{
         //有token
         //请求bangumi api
 
-        $url_user='https://api.bgm.tv/collection/'.$subject_id."?access_token=".$user_access_token;
+        $url_user="https://api.bgm.tv/collection/{$subject_id}?access_token=$user_access_token";
         //bangumi JSON
         $json_user=file_get_contents($url_user);
         $data_user=json_decode($json_user,true);
@@ -839,9 +830,9 @@ else{
             $su_user_avatar=$su_user['avatar']['large'];
             $su_user_url=$su_user['url'];
 
-            $final_subject_rating=$subject_rating['score']==null?"":"<平均: ".$subject_rating['score'].">";
+            $final_subject_rating=$subject_rating['score']==null?"":"<平均: {$subject_rating['score']}>";
             $final_subject_eps=$subject_eps==null?"??":$subject_eps;
-            $user_rating_msg=$su_rating==0?"":"\n评分:  $su_rating   ".$final_subject_rating;
+            $user_rating_msg=$su_rating==0?"":"\n评分:  $su_rating   $final_subject_rating";
             $user_comment_msg=$su_comment==""?"":"\n吐槽:  $su_comment";
             $user_watched_msg=$su_ep==0?"":"\n完成度: $su_ep/$final_subject_eps \n";
             if($su_ep!=0){
@@ -862,15 +853,15 @@ else{
             	//
                 if($aired_subject_eps==$su_ep)
                             {
-                            	if($su_ep!=1){
-                            		for($user_watched_msg.="Δ",$j=1;$j<$su_ep-1;++$j)
-                                	{
-                                	    $user_watched_msg.="-Δ";
-                                	}
-                                	$user_watched_msg.="-₳";
-                            	}else{
-                            		$user_watched_msg.="₳";
-                            	}
+                                if($su_ep!=1){
+                                    for($user_watched_msg.="Δ",$j=1;$j<$su_ep-1;++$j)
+                                    {
+                                        $user_watched_msg.="-Δ";
+                                    }
+                                    $user_watched_msg.="-₳";
+                                }else{
+                                    $user_watched_msg.="₳";
+                                }
 
                             }
                             else
@@ -897,11 +888,7 @@ else{
 
             }
             // 的第 [".$su_status['id']."] 个"
-            $user_subject_submsg="\n\n[".$su_user_nick."] 收藏为 [".$su_status['name']."]".
-                $user_watched_msg.
-                $user_rating_msg.
-                $user_comment_msg.
-                "\n".$su_user_nick." 的主页:  ".$su_user_url;
+            $user_subject_submsg="\n\n[{$su_user_nick}] 收藏为 [{$su_status['name']}]{$user_watched_msg}{$user_rating_msg}{$user_comment_msg}\n{$su_user_nick} 的主页:  $su_user_url";
             $user_subject_msg=array(
                 array('type'=>"text",
                     'data'=>array(
@@ -939,7 +926,7 @@ else{
     $msg=array(
         array('type'=>"text",
             'data'=>array(
-                'text'=>$subject_name_cn_fin.$subject_name_fin
+                'text'=>"{$subject_name_cn_fin}{$subject_name_fin}"
             )
         ));
     //以下medium具备
@@ -950,9 +937,7 @@ else{
         $start_msg=array(
             array('type'=>"text",
                 'data'=>array(
-                    'text'=>"\n___________".
-                        "\n"."目前收录的角色数: ".$character_num.
-                        "\n\n"
+                    'text'=>"\n___________\n目前收录的角色数: $character_num\n\n"
                 )
             )
         );
@@ -975,18 +960,18 @@ else{
             $character_info=$character['info'];
 
             //名字
-            $character_name_final=($character_name==null||$character_name=="")?"":("\n日文名:  ".$character_name);
-            $character_name_cn_final=($character_name_cn==null||$character_name_cn=="")?"":("\n中文名:  ".$character_name_cn);
+            $character_name_final=($character_name==null||$character_name=="")?"":("\n日文名:  $character_name");
+            $character_name_cn_final=($character_name_cn==null||$character_name_cn=="")?"":("\n中文名:  $character_name_cn");
 
             $character_info_alias=$character_info['alias'];
-            $character_alias_en=$character_info_alias['en']==null?"":("\n英文名:  ".$character_info_alias['en']);
-            $character_alias_kana=$character_info_alias['kana']==null?"":("\n假名:  ".$character_info_alias['kana']);
-            $character_alias_romaji=$character_info_alias['romaji']==null?"":("\n罗马音:  ".$character_info_alias['romaji']);
-            $character_alias_nick=$character_info_alias['nick']==null?"":("\n别名:  ".$character_info_alias['nick']);
+            $character_alias_en=$character_info_alias['en']==null?"":("\n英文名:  {$character_info_alias['en']}");
+            $character_alias_kana=$character_info_alias['kana']==null?"":("\n假名:  {$character_info_alias['kana']}");
+            $character_alias_romaji=$character_info_alias['romaji']==null?"":("\n罗马音:  {$character_info_alias['romaji']}");
+            $character_alias_nick=$character_info_alias['nick']==null?"":("\n别名:  {$character_info_alias['nick']}");
             $start_msg_character_alias_nick=$character_info_alias['nick']==null?"别名:":"        ";
-            $character_alias_nick_0=$character_info_alias['0']==null?"": ("\n".$start_msg_character_alias_nick."  ".$character_info_alias['0']);
-            $character_alias_nick_1=$character_info_alias['1']==null?"":("\n         ".$character_info_alias['1']);
-            $character_alias_nick_2=$character_info_alias['2']==null?"":("\n         ".$character_info_alias['2']);
+            $character_alias_nick_0=$character_info_alias['0']==null?"": ("\n{$start_msg_character_alias_nick}  {$character_info_alias['0']}");
+            $character_alias_nick_1=$character_info_alias['1']==null?"":("\n         {$character_info_alias['1']}");
+            $character_alias_nick_2=$character_info_alias['2']==null?"":("\n         {$character_info_alias['2']}");
             //名字的结果字符串
             $character_alias=$character_name_final.$character_name_cn_final.$character_alias_en.
                                 $character_alias_kana.$character_alias_romaji.$character_alias_nick.
@@ -1000,13 +985,13 @@ else{
             $character_years=$character_info['年龄'];
 
             //个人资料
-            $character_gender_fin=$character_gender==null?"":("\n性别:  ".$character_gender);
-            $character_years_fin=$character_years==null?"":("\n年龄:  ".$character_years);
-            $character_birth_fin=$character_birth==null?"":("\n生日:  ".$character_birth);
-            $character_bloodtype_fin=$character_bloodtype==null?"":("\n血型:  ".$character_bloodtype);
-            $character_height_fin=$character_height==null?"":("\n身高:  ".$character_height);
+            $character_gender_fin=$character_gender==null?"":("\n性别:  $character_gender");
+            $character_years_fin=$character_years==null?"":("\n年龄:  $character_years");
+            $character_birth_fin=$character_birth==null?"":("\n生日:  $character_birth");
+            $character_bloodtype_fin=$character_bloodtype==null?"":("\n血型:  $character_bloodtype");
+            $character_height_fin=$character_height==null?"":("\n身高:  $character_height");
             //个人资料的结果字符串
-            $character_infomation_fin=$character_gender_fin.$character_years_fin.$character_birth_fin.$character_bloodtype_fin.$character_height_fin;
+            $character_infomation_fin="{$character_gender_fin}{$character_years_fin}{$character_birth_fin}{$character_bloodtype_fin}{$character_height_fin}";
 
             //可能多个CV
             $actor_msg_fin=array( array(
@@ -1063,23 +1048,22 @@ else{
                 //处理声优最终头像
                 if($actor_url!=null)
                 {
-                    $actor_msg_img_fin[0]['data']['text']="CV".($actor_size>1?(" (".($actor_num+1).")"):"").":\n";
+                    $actor_num_msg=$actor_size>1?(' ('.($actor_num+1).')'):"";
+                    $actor_msg_img_fin[0]['data']['text']="CV{$actor_num_msg}:\n";
                     $actor_msg_img_fin[1]['type']="image";
                     $actor_msg_img_fin[1]['data']=array(
                         'file'=>$actor_img
                     );
                 }
                 //声优其他信息
-                $actor_name_fin=$actor_name==null?"":("\n姓名:  ".$actor_name);
-                $actor_url_fin=$actor_url==null?"":("\nCV主页:  ".$actor_url);
+                $actor_name_fin=$actor_name==null?"":("\n姓名:  $actor_name");
+                $actor_url_fin=$actor_url==null?"":("\nCV主页:  $actor_url");
                 //声优信息的结果字符串
                 $actor_msg_text_fin=array(
                     array('type'=>"text",
                         'data'=>array(
                             'text'=>
-                                $actor_name_fin.
-                                $actor_url_fin.
-                                "\n".($actor_size-1==$actor_num?"----------------\n\n":"\n")
+                                "{$actor_name_fin}{$actor_url_fin}\n".($actor_size-1==$actor_num?"----------------\n\n":"\n")
                         )
                     ),
                 );
@@ -1098,10 +1082,7 @@ else{
                 array('type'=>"text",
                     'data'=>array(
                         'text'=>
-                            $character_alias.
-                            $character_infomation_fin.
-                            "\n角色主页:  ".$character_url.
-                            "\n"
+                            "{$character_alias}{$character_infomation_fin}\n角色主页:  {$character_url}\n"
                     )
                 )
 //                array('type'=>"image",
