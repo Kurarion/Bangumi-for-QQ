@@ -107,7 +107,8 @@ if(!$fail){
     $row=mysqli_fetch_array($result,MYSQLI_ASSOC);
     if($row!=false){
         $user_num=$row['user_id'];
-        $re_msg="你不是第".$user_num."位魔法少女么...";
+        // $re_msg="你不是第".$user_num."位魔法少女么...";
+        $re_msg="你不是第{$user_num}位魔法少女么...";
         $fail=true;
         $refresh=true;
     }
@@ -131,19 +132,21 @@ if(!$fail){
     if(mysqli_query($con,$reg_user_sql)){
 
         if(mysqli_query($con,$reg_subject_sql)){
-                $re_msg="QQ：$to 与 Bangumi-ID：$user_id 完成缔约！\n".
-                    "新的魔法少女诞生！";
+                // $re_msg="QQ：$to 与 Bangumi-ID：$user_id 完成缔约！\n".
+                //     "新的魔法少女诞生！";
+                $re_msg="QQ：$to 与 Bangumi-ID：$user_id 完成缔约！\n新的魔法少女诞生！";
         }
         else{
-                $re_msg="法杖明明在这里但吉祥物却丢了\n".
-                    "缔约失败......";
+                // $re_msg="法杖明明在这里但吉祥物却丢了\n".
+                //     "缔约失败......";
+                $re_msg="法杖明明在这里但吉祥物却丢了\n缔约失败......";
         }
     }
     else{
+        // $re_msg="法杖丢了还是被人拿走了呢？\n".
+        //         "缔约失败......";
 
-
-        $re_msg="法杖丢了还是被人拿走了呢？\n".
-                "缔约失败......";
+            $re_msg="法杖丢了还是被人拿走了呢？\n缔约失败......";
         //"\n".$sql.
         //"\n".mysqli_error($con);
 

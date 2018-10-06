@@ -30,9 +30,10 @@ $encode_url=urlencode($redirect_url);
 if($_GET['type']=='private'){
     //加密参数 type
     //$pra_type=\access\$type2password[$_GET['type']];
-    $msg="点击下面这个链接与我签订契约吧！\n".
-        "https://bgm.tv/oauth/authorize?client_id=".$client_id."&response_type=code"."&redirect_uri=".
-        $encode_url."&state=$state";
+        // $msg="点击下面这个链接与我签订契约吧！\n".
+        // "https://bgm.tv/oauth/authorize?client_id=".$client_id."&response_type=code"."&redirect_uri=".
+        // $encode_url."&state=$state";
+    $msg="点击下面这个链接与我签订契约吧！\nhttps://bgm.tv/oauth/authorize?client_id=$client_id&response_type=code&redirect_uri=$encode_url&state=$state";
 //[废弃:还要涉及发送消息的参数传递]由于bangumi已有可选的回调地址，此处省略
 //&redirect_uri=http://www.xxxxxx.xxx/bangumi.php
 }
