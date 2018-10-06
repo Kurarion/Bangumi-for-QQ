@@ -16,7 +16,7 @@ else {
     echo "access";
 }
 //参数
-$type='send_'.$_GET['type'].'_msg';
+$type="send_{$_GET['type']}_msg";
 $to=$_GET['to'];
 $from=$_GET['from'];
 
@@ -127,8 +127,8 @@ if($use_save){
 if($need_bgm_api){
     //向Bangumi API 请求
     //{wish/collect/do/on_hold/dropped}
-    $url_rating=($subject_rating==null)?"":"&rating=".$subject_rating;
-    $url_comment=($subject_comment==null)?"":"&comment=".$subject_comment;
+    $url_rating=($subject_rating==null)?"":"&rating=$subject_rating";
+    $url_comment=($subject_comment==null)?"":"&comment=$subject_comment";
     $subject_col=($subject_col==null)?"wish":$subject_col;
     if(!array_key_exists($subject_col,$status2col)){
         $subject_col="wish";
@@ -138,7 +138,7 @@ if($need_bgm_api){
         'http' => array (
             'method' => 'POST',
             'header' => array("content-type: application/x-www-form-urlencoded",
-                "Authorization: Bearer ".$user_access_token),
+                "Authorization: Bearer $user_access_token"),
             'content' => $data
         )
     );
@@ -152,22 +152,22 @@ if($need_bgm_api){
     $subject_name='';
     if($subject_id!=0){
                 //请求bangumi api
-        $urlx='https://api.bgm.tv/subject/'.$subject_id;
+        $urlx="https://api.bgm.tv/subject/$subject_id";
         //bangumi JSON
         $jsonx=file_get_contents($urlx);
         $datax=json_decode($jsonx,true);
 
-        $subject_name=($datax['name_cn']!=null?$datax['name_cn']:'').($datax['name']!=null?('('.$datax['name'].')'):'');
+        $subject_name=($datax['name_cn']!=null?$datax['name_cn']:'').($datax['name']!=null?("({$datax['name']})"):'');
     }
 
     if(array_key_exists("status",$return_data)){
         //可能更新成功
-        \access\send_msg($type,$to, $return_data['user']['nickname']." 已收藏条目 ".$subject_name.'['.$subject_id."] 为 ".$status2col[$subject_col],constant('token'));
+        \access\send_msg($type,$to, "{$return_data['user']['nickname']} 已收藏条目 {$subject_name}[{$subject_id}] 为 ".$status2col[$subject_col],constant('token'));
         //\access\send_msg($type,$to,$data,constant('token'));
         //如果需要，直接调用subject
         if($subject_detail){
             \access\send_msg($type,$to,"条目信息祈祷中...",constant('token'));
-            $php="/api/subject/bangumi_subject.php?subject_id=".$subject_id;
+            $php="/api/subject/bangumi_subject.php?subject_id=$subject_id";
             $php.="&type=".$_GET['type'];
             $php.="&to=".$to;
             $php.="&from=".$from;
@@ -180,7 +180,7 @@ if($need_bgm_api){
 
     }else{
         //失败
-        \access\send_msg($type,$to,"条目 ".$subject_name.'['.$subject_id."] 收藏失败...",constant('token'));
+        \access\send_msg($type,$to,"条目 {$subject_name}[{$subject_id}] 收藏失败...",constant('token'));
     }
 
 }

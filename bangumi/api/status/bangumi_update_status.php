@@ -17,7 +17,7 @@ else {
     echo "access";
 }
 //参数
-$type='send_'.$_GET['type'].'_msg';
+$type="send_{$_GET['type']}_msg";
 $to=$_GET['to'];
 $from=$_GET['from'];
 
@@ -109,12 +109,12 @@ if($use_save){
 //判断是否继续请求API
 if($need_bgm_api){
     //向Bangumi API 请求
-    $data="watched_eps="."$subject_eps"."&watched_vols="."$subject_eps";
+    $data="watched_eps={$subject_eps}&watched_vols={$subject_eps}";
     $opts = array (
         'http' => array (
             'method' => 'POST',
             'header' => array("content-type: application/x-www-form-urlencoded",
-                "Authorization: Bearer ".$user_access_token),
+                "Authorization: Bearer $user_access_token"),
             'content' => $data
         )
     );
@@ -126,28 +126,28 @@ if($need_bgm_api){
     $subject_name='';
     if($subject_id!=0){
                 //请求bangumi api
-        $urlx='https://api.bgm.tv/subject/'.$subject_id;
+        $urlx="https://api.bgm.tv/subject/{$subject_id}";
         //bangumi JSON
         $jsonx=file_get_contents($urlx);
         $datax=json_decode($jsonx,true);
 
-        $subject_name=($datax['name_cn']!=null?$datax['name_cn']:'').($datax['name']!=null?('('.$datax['name'].')'):'');
+        $subject_name=($datax['name_cn']!=null?$datax['name_cn']:'').($datax['name']!=null?("({$datax['name']})"):'');
     }
 
     $return_data=json_decode($json,true);
     if($return_data['error']=="Accepted"){
         //可能更新成功
-        \access\send_msg($type,$to,"条目 ".$subject_name.'['.$subject_id."] 进度更新成功~",constant('token'));
+        \access\send_msg($type,$to,"条目 {$subject_name}[{$subject_id}] 进度更新成功~",constant('token'));
         //\access\send_msg($type,$to,$_GET['subject_detail']." ",constant('token'));
         //如果需要，直接调用subject
         if($subject_detail){
             \access\send_msg($type,$to,"条目信息祈祷中...",constant('token'));
-            $php="/api/subject/bangumi_subject.php?subject_id=".$subject_id;
-            $php.="&type=".$_GET['type'];
-            $php.="&to=".$to;
-            $php.="&from=".$from;
+            $php="/api/subject/bangumi_subject.php?subject_id=$subject_id";
+            $php.="&type={$_GET['type']}";
+            $php.="&to=$to";
+            $php.="&from=$from";
             $php.="&access=".constant("password");
-            $url='http://127.0.0.1/bangumi'.$php;
+            $url="http://127.0.0.1/bangumi{$php}";
 
 
             file_get_contents($url);
@@ -155,7 +155,7 @@ if($need_bgm_api){
 
     }else{
         //失败
-        \access\send_msg($type,$to,"条目 ".$subject_name.'['.$subject_id."] 进度更新失败...\n请确保有收藏过此条目并且更新的进度与上次不同",constant('token'));
+        \access\send_msg($type,$to,"条目 {$subject_name}[{$subject_id}] 进度更新失败...\n请确保有收藏过此条目并且更新的进度与上次不同",constant('token'));
     }
 
 }
