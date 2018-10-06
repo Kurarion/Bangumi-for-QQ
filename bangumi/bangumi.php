@@ -239,6 +239,42 @@ switch ($low_msg[1]){
             $dead=true;
         }
         break;
+    case 'q':
+        if(1==strpos($low_msg,'q')){
+            if(constant('administrator')==$sub_from){
+                $php.="/report/report.php?";
+                $para=explode(" ",$msg);
+                $size=count($para);
+                $report_from=$size>1?urlencode($para[1]):null;
+                $report_msg=$size>2?urlencode($para[2]):null;
+                $report_type='last_msg';
+                switch ($low_msg[2]) {
+                    case 'p':
+                        $report_type='send_private_msg';
+                        break;
+                    case 'd':
+                        $report_type='send_discuss_msg';
+                        break;
+                    case 'g':
+                        $report_type='send_group_msg';
+                        break;
+                    case 'h':
+                        $report_type='get_msg';
+                        break;
+                    default:
+                        break;
+                }
+                $php.="report_type={$report_type}&report_from={$report_from}&report_msg={$report_msg}&";
+            }else
+            {
+                $re_msg[0]['data']['text']="无权限...";
+                $dead=true;
+            }
+            break;
+        }else{
+            //$re_msg[0]['data']['text']="~是相关订阅资源的功能\n当然这只能给魔法少女使用哦~\n【----具体使用----】\n施工中...";
+            $dead=true;
+        }
     default:
         //匹配不能
         //die();

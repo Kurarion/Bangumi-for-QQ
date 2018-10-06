@@ -3,6 +3,7 @@ require_once './api/access.php';
 //json
 $json=file_get_contents('php://input');
 $data=json_decode($json,true);
+
 //Example
 /*
  * {
@@ -34,6 +35,32 @@ $new_json_data=array(
 	'group_id'=>$data['group_id'],
 	'discuss_id'=>$data['discuss_id']
 );
+//Report
+if(constant('administrator')!=$data['user_id']){
+    $report_message=null;
+    $from=null;
+    //qq号 群号 讨论组ID
+    switch ($data['message_type']){
+        case "private":
+            //$from=$sub_from;
+            break;
+        case "group":
+            $from=$data['group_id'];
+            break;
+        case "discuss":
+            $from=$data['discuss_id'];
+            break;
+        default:
+            //$from=null;
+            die("error in switch(type)!") ;
+            break;
+    }
+    $from_where=$from==null?'':"($from)";
+    $report_message="{$data['user_id']}{$from_where} : [{$orign_data}]";
+    \access\send_msg('send_private_msg',constant('administrator'),$report_message,constant("token"));
+}
+
+
 /*
 switch ($data['sub_type']){
     case "private":
@@ -61,7 +88,7 @@ $para=explode("~",$orign_data);
 $size=count($para);
 for($i=1;$i<$size;++$i)
 {
-	$new_json_data['message']='~'.$para[$i];
+	$new_json_data['message']="~{$para[$i]}";
 	
 	//\access\send_msg('send_private_msg',597320012,"para[$i]: ".$para[$i],constant("token"));
 	//\access\send_msg('send_private_msg',597320012,"data['message']: ".$new_json_data['message'],constant("token"));

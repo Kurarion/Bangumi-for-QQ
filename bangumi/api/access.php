@@ -8,6 +8,7 @@ namespace access{
     define('sql_user',"sql_user");
     define('sql_password',"sql_password");
     define('max_list',26);
+    define('administrator',Owner_QQ);
     //数字隐藏转换<没有比这更单纯的加密方式了>
     $num2code=array(
         0 => 'z',
@@ -447,7 +448,7 @@ namespace access{
             //\access\send_msg('send_private_msg',597320012,$list_name.'@'.$name_site.'@'.$save_id.'@'.$right_num_site.'@'.$right_num,constant('token'));
             //
             if($right_num!=-1){
-                $right_id=$row['subject_'.$right_num];
+                $right_id=$row["subject_{$right_num}"];
                 return $right_id;
             }else{
                 return false;//3
