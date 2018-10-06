@@ -93,8 +93,7 @@ else{
     $msg=array(
         array('type'=>"text",
             'data'=>array(
-                'text'=>"总计相符条目数: ".$results_num.
-                    "\n\n"
+                'text'=>"总计相符条目数: $results_num\n\n"
             )
         )
     );
@@ -110,13 +109,12 @@ else{
         }else{
             $subject_img="http://www.irisu.cc/res/no_img.gif";
         }
-
+        ++$num;
         //msg
         $subject_msg=array(
             array('type'=>"text",
                 'data'=>array(
-                    'text'=>"_____<".++$num.">_____".
-                        "\n"
+                    'text'=>"_____<$num>_____\n"
                 )
             ),
             array('type'=>"image",
@@ -126,11 +124,12 @@ else{
             ),
             array('type'=>"text",
                 'data'=>array(
-                    'text'=>"\n".$subject_name_cn.
-                        "\n"."< ".$subject_name." >".
-                        "\n<-".$subject_type."->   ID: ".$subject_id.
-                        "\n条目主页:".$subject_url.
-                        "\n\n"
+                    // 'text'=>"\n".$subject_name_cn.
+                    //     "\n"."< ".$subject_name." >".
+                    //     "\n<-".$subject_type."->   ID: ".$subject_id.
+                    //     "\n条目主页:".$subject_url.
+                    //     "\n\n"
+                    'text'=>"\n$subject_name_cn\n< $subject_name >\n<-$subject_type->   ID: $subject_id\n条目主页:$subject_url\n\n"
                 )
             )
 
@@ -140,7 +139,7 @@ else{
     $end_msg=array(
         array('type'=>"text",
             'data'=>array(
-                'text'=>"总计相符条目数: ".$results_num
+                'text'=>"总计相符条目数: $results_num"
             )
         )
     );
