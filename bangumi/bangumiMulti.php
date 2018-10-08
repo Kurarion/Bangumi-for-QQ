@@ -35,30 +35,45 @@ $new_json_data=array(
 	'group_id'=>$data['group_id'],
 	'discuss_id'=>$data['discuss_id']
 );
-//Report
-if(constant('administrator')!=$data['user_id']){
-    $report_message=null;
-    $from=null;
-    //qq号 群号 讨论组ID
-    switch ($data['message_type']){
-        case "private":
-            //$from=$sub_from;
-            break;
-        case "group":
-            $from=$data['group_id'];
-            break;
-        case "discuss":
-            $from=$data['discuss_id'];
-            break;
-        default:
-            //$from=null;
-            die("error in switch(type)!") ;
-            break;
-    }
-    $from_where=$from==null?'':"($from)";
-    $report_message="{$data['user_id']}{$from_where} : [{$orign_data}]";
-    \access\send_msg('send_private_msg',constant('administrator'),$report_message,constant("token"));
+//setting
+$setting_path='setting.data';
+if(constant('administrator')==$data['user_id']){
+	
+	if($orign_data=='!on'){
+		file_put_contents($setting_path, 1);
+	}elseif($orign_data=='!off'){
+		file_put_contents($setting_path, 0);
+	}
 }
+//Report
+
+if(file_exists($setting_path)){
+	$setting=file_get_contents($setting_path);
+	if(constant('administrator')!=$data['user_id']&&$setting==1){
+	    $report_message=null;
+	    $from=null;
+	    //qq号 群号 讨论组ID
+	    switch ($data['message_type']){
+	        case "private":
+	            //$from=$sub_from;
+	            break;
+	        case "group":
+	            $from=$data['group_id'];
+	            break;
+	        case "discuss":
+	            $from=$data['discuss_id'];
+	            break;
+	        default:
+	            //$from=null;
+	            die("error in switch(type)!");
+	            break;
+	    }
+	    $from_where=$from==null?'':"($from)";
+	    $report_message="{$data['user_id']}{$from_where} : [{$orign_data}]";
+	    \access\send_msg('send_private_msg',constant('administrator'),$report_message,constant("token"));
+	}
+}
+
 
 
 /*
