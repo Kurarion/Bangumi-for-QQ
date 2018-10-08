@@ -20,6 +20,7 @@ else {
 $type="send_{$_GET['type']}_msg";
 $to=$_GET['to'];
 $from=$_GET['from'];
+$cache_file=$_GET['file'];
 
 $subject_id=$_GET['subject_id'];
 $subject_eps=$_GET['subject_eps'];
@@ -146,6 +147,8 @@ if($need_bgm_api){
             $php.="&type={$_GET['type']}";
             $php.="&to=$to";
             $php.="&from=$from";
+            //是否读取缓存
+            $php.="&file={$cache_file}";  
             $php.="&access=".constant("password");
             $url="http://127.0.0.1/bangumi{$php}";
 

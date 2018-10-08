@@ -9,6 +9,7 @@ namespace access{
     define('sql_password',"sql_password");
     define('max_list',26);
     define('administrator',Owner_QQ);
+    define('cache_file_path',Cache_Path);
     //数字隐藏转换<没有比这更单纯的加密方式了>
     $num2code=array(
         0 => 'z',
@@ -457,6 +458,51 @@ namespace access{
         }
 
 
+    }
+    //请求Bangumi subject api
+    function &request_subject($file_name,$subject_id,$find_from_file=true,$response_group='small'){
+        $file_path=constant('cache_file_path')."{$subject_id}_{$file_name}.data";
+        $b_serialize=$find_from_file;
+        //test
+        //\access\send_msg('send_private_msg',597320012,"access:".dirname(__FILE__),constant('token'));
+        if($find_from_file&&file_exists($file_path)){
+            //读取
+            $serialize_data=file_get_contents($file_path);
+            //
+            $data_array=unserialize($serialize_data);
+            //test
+            //\access\send_msg('send_private_msg',597320012,"access:$serialize_data",constant('token'));
+            //返回
+            return array($data_array,$b_serialize);
+        }else{
+            //请求bangumi api
+            $url="https://api.bgm.tv/subject/$subject_id?responseGroup=$response_group";
+            //bangumi JSON
+            $json=file_get_contents($url);
+            $data=json_decode($json,true);
+            //序列化
+            $b_serialize=false;
+            //返回
+            return array($data,$b_serialize);            
+        }
+
+    }
+    //序列化
+    function &read_file($file_name,$subject_id){
+        $file_path=constant('cache_file_path')."{$subject_id}_{$file_name}.data";
+
+        if(file_exists($file_path)){
+            //读取
+            $serialize_data=file_get_contents($file_path);
+            //
+            $data_array=unserialize($serialize_data);
+            //test
+            //\access\send_msg('send_private_msg',597320012,"access:$serialize_data",constant('token'));
+            //返回
+            return $data_array;
+        }else{
+            return false;
+        }
     }
 }
 

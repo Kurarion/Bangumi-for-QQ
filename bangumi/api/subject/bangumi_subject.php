@@ -28,6 +28,9 @@ $use_save=false;
 $need_bgm_api=true;
 //decode_subject_id
 $decode_subject_id=0;
+//是否读取缓存
+$cache_file=($_GET['file']==1||$_GET['file']==null)?true:false;
+$crt_cache_file=$cache_file;
 //\access\send_msg($type,$to,"$subject_id use_save=true",constant('token'));
 //这里是用作情况二的解码识别
 if($subject_id!=null&&!is_numeric($subject_id)){
@@ -136,10 +139,13 @@ if($need_bgm_api){
     global $json;
     global $data;
     //请求bangumi api
-    $url="https://api.bgm.tv/subject/{$subject_id}?responseGroup={$subject_group}";
+    //$url="https://api.bgm.tv/subject/{$subject_id}?responseGroup={$subject_group}";
     //bangumi JSON
-    $json=file_get_contents($url);
-    $data=json_decode($json,true);
+    // $json=file_get_contents($url);
+    // $data=json_decode($json,true);
+    //请求Bangumi api 函数
+    $file_last_name='subject_one';
+    list($data,$cache_file)=\access\request_subject($file_last_name,$subject_id,$cache_file,$subject_group);
 }else{
     $subject_id=0;
 }
@@ -705,7 +711,7 @@ if($need_bgm_api){
  * }
  */
 //判断是否无效
-if($subject_id==null||array_key_exists('error',$data)||!(array_key_exists('id',$data)))
+if(($subject_id==null||array_key_exists('error',$data)||!(array_key_exists('id',$data)))&&!$cache_file)
 {
     //未找到...
     $msg=array(
@@ -725,83 +731,89 @@ if($subject_id==null||array_key_exists('error',$data)||!(array_key_exists('id',$
 }
 else{
 
-    //条目基本信息
-    $subject_url=$data['url'];
-    $subject_type=$type2name[$data['type']];
-    $state=$type2state[$data['type']];
-    $subject_name=$data['name'];
-    //$subject_name_cn=$data['name_cn']!=null?$data['name_cn']:"暂无";
-    $subject_name_cn=$data['name_cn'];
-    $subject_summary=$data['summary'];
-    //$subject_eps=$data['eps_count']!=null?$data['eps_count']:"无";
-    $subject_eps=$data['eps_count'];
-    //$subject_air_date=$data['air_date']!=null?$data['air_date']:"未知";
-    $subject_air_date=$data['air_date'];
-    //$subject_air_weekday=$data['air_weekday']!=null?$int2weekday[$data['air_weekday']]:"未知";
-    $subject_air_weekday=$data['air_weekday'];
-
-    $subject_rating=$data['rating'];
-    $subject_rating_num=$subject_rating['total']==null?"0":$subject_rating['total'];
-    $subject_rating_average=$subject_rating['score']==null?"无":$subject_rating['score'];
-
-    $subject_rank=$data['rank']!=null?$data['rank']:"无";
-    if($data['images']!=null){
-        $subject_img=$data['images']['large'];
+    if($cache_file){
+        //从文件中读取
+        $msg=$data['msg'];
+        //\access\send_msg($type,$to,$msg,constant('token'));
     }else{
-        $subject_img="http://www.irisu.cc/res/no_img.gif";
+        //条目基本信息
+        $subject_url=&$data['url'];
+        $subject_type=$type2name[$data['type']];
+        $state=$type2state[$data['type']];
+        $subject_name=&$data['name'];
+        //$subject_name_cn=$data['name_cn']!=null?$data['name_cn']:"暂无";
+        $subject_name_cn=&$data['name_cn'];
+        $subject_summary=&$data['summary'];
+        //$subject_eps=$data['eps_count']!=null?$data['eps_count']:"无";
+        $subject_eps=&$data['eps_count'];
+        //$subject_air_date=$data['air_date']!=null?$data['air_date']:"未知";
+        $subject_air_date=&$data['air_date'];
+        //$subject_air_weekday=$data['air_weekday']!=null?$int2weekday[$data['air_weekday']]:"未知";
+        $subject_air_weekday=&$data['air_weekday'];
+
+        $subject_rating=&$data['rating'];
+        $subject_rating_num=$subject_rating['total']==null?"0":$subject_rating['total'];
+        $subject_rating_average=$subject_rating['score']==null?"无":$subject_rating['score'];
+
+        $subject_rank=$data['rank']!=null?$data['rank']:"无";
+        if($data['images']!=null){
+            $subject_img=$data['images']['large'];
+        }else{
+            $subject_img="http://www.irisu.cc/res/no_img.gif";
+        }
+
+
+        //条目收藏状态
+        $subject_collection=$data['collection'];
+        $subject_collection_wish=$subject_collection['wish']==null?"0":$subject_collection['wish'];
+        $subject_collection_doing=$subject_collection['doing']==null?"0":$subject_collection['doing'];
+        $subject_collection_on_hold=$subject_collection['on_hold']==null?"0":$subject_collection['on_hold'];
+        $subject_collection_dropped=$subject_collection['dropped']==null?"0":$subject_collection['dropped'];
+        $subject_collection_collection=$subject_collection['collect']==null?"0":$subject_collection['collect'];
+        //$subject_collection_over=$subject_collection_collection-$subject_collection_dropped-$subject_collection_on_hold-$subject_collection_doing-$subject_collection_wish;
+        //条目部分的最终结果
+        /*
+         *              "\n中文名:  ".$subject_name_cn.
+                        "\n原名:  ".$subject_name.
+                        "\n话数:  ".$subject_eps.
+                        "\n放送日期:  ".$subject_air_date.
+                        "\n放送星期:  ".$subject_air_weekday.
+                        "\n类型:  ".$subject_type."      ID: ".$subject_id.
+                        "\n简介:  ".$subject_summary.
+        */
+        $subject_name_cn_fin=$subject_name_cn==null?"":("\n中文名:  $subject_name_cn");
+        $subject_name_fin=$subject_name==null?"":("\n原名:  $subject_name");
+        $subject_eps_fin=$subject_eps==null?"":("\n话数:  $subject_eps");
+        $subject_air_date_fin=$subject_air_date=="0000-00-00"?"":("\n放送日期:  $subject_air_date");
+        $subject_air_weekday_fin=$subject_air_weekday==null?"":("\n放送星期:  ".$int2weekday[$subject_air_weekday]);
+        $subject_type_id_fin="\n类型:  $subject_type      ID: $subject_id";
+        $subject_summary_fin=$subject_summary==null?"":("\n简介:  $subject_summary");
+        //最终结果
+        $subject_msg_part_fin="{$subject_name_cn_fin}{$subject_name_fin}{$subject_eps_fin}{$subject_air_date_fin}{$subject_air_weekday_fin}{$subject_type_id_fin}{$subject_summary_fin}";
+
+        //msg
+        $msg=array(
+            array('type'=>"image",
+                'data'=>array(
+                    'file'=>$subject_img
+                )
+            ),
+            array('type'=>"text",
+                'data'=>array(
+                    'text'=>
+                        "$subject_msg_part_fin\n\n排名:  $subject_rank\n评分:  $subject_rating_average      评分数: $subject_rating_num\n\n想{$state}用户数:  $subject_collection_wish\n在{$state}用户数:  $subject_collection_doing\n{$state}过用户数:  $subject_collection_collection\n搁置用户数:  $subject_collection_on_hold\n抛弃用户数:  $subject_collection_dropped\n条目主页:  {$subject_url}"
+
+                )
+            )
+        );
+        //序列化基本信息
+        $data_array=array('msg'=>$msg,'crt'=>$data['crt'],'name_cn'=>$subject_name_cn_fin,'name'=>$subject_name_fin,'score'=>$subject_rating['score'],'eps'=>$subject_eps,'air_date'=>$subject_air_date);      
+        $serialize_data=serialize($data_array);
+        //序列化
+        file_put_contents(constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",$serialize_data);
     }
 
-
-    //条目收藏状态
-    $subject_collection=$data['collection'];
-    $subject_collection_wish=$subject_collection['wish']==null?"0":$subject_collection['wish'];
-    $subject_collection_doing=$subject_collection['doing']==null?"0":$subject_collection['doing'];
-    $subject_collection_on_hold=$subject_collection['on_hold']==null?"0":$subject_collection['on_hold'];
-    $subject_collection_dropped=$subject_collection['dropped']==null?"0":$subject_collection['dropped'];
-    $subject_collection_collection=$subject_collection['collect']==null?"0":$subject_collection['collect'];
-    //$subject_collection_over=$subject_collection_collection-$subject_collection_dropped-$subject_collection_on_hold-$subject_collection_doing-$subject_collection_wish;
-    //条目部分的最终结果
-    /*
-     *              "\n中文名:  ".$subject_name_cn.
-                    "\n原名:  ".$subject_name.
-                    "\n话数:  ".$subject_eps.
-                    "\n放送日期:  ".$subject_air_date.
-                    "\n放送星期:  ".$subject_air_weekday.
-                    "\n类型:  ".$subject_type."      ID: ".$subject_id.
-                    "\n简介:  ".$subject_summary.
-    */
-    $subject_name_cn_fin=$subject_name_cn==null?"":("\n中文名:  $subject_name_cn");
-    $subject_name_fin=$subject_name==null?"":("\n原名:  $subject_name");
-    $subject_eps_fin=$subject_eps==null?"":("\n话数:  $subject_eps");
-    $subject_air_date_fin=$subject_air_date=="0000-00-00"?"":("\n放送日期:  $subject_air_date");
-    $subject_air_weekday_fin=$subject_air_weekday==null?"":("\n放送星期:  ".$int2weekday[$subject_air_weekday]);
-    $subject_type_id_fin="\n类型:  $subject_type      ID: $subject_id";
-    $subject_summary_fin=$subject_summary==null?"":("\n简介:  $subject_summary");
-    //最终结果
-    $subject_msg_part_fin="{$subject_name_cn_fin}{$subject_name_fin}{$subject_eps_fin}{$subject_air_date_fin}{$subject_air_weekday_fin}{$subject_type_id_fin}{$subject_summary_fin}";
-
-    //msg
-    $msg=array(
-        array('type'=>"image",
-            'data'=>array(
-                'file'=>$subject_img
-            )
-        ),
-        array('type'=>"text",
-            'data'=>array(
-                'text'=>
-//                    "\n中文名:  ".$subject_name_cn.
-//                    "\n原名:  ".$subject_name.
-//                    "\n话数:  ".$subject_eps.
-//                    "\n放送日期:  ".$subject_air_date.
-//                    "\n放送星期:  ".$subject_air_weekday.
-//                    "\n类型:  ".$subject_type."      ID: ".$subject_id.
-//                    "\n简介:  ".$subject_summary.
-                    "$subject_msg_part_fin\n\n排名:  $subject_rank\n评分:  $subject_rating_average      评分数: $subject_rating_num\n\n想{$state}用户数:  $subject_collection_wish\n在{$state}用户数:  $subject_collection_doing\n{$state}过用户数:  $subject_collection_collection\n搁置用户数:  $subject_collection_on_hold\n抛弃用户数:  $subject_collection_dropped\n条目主页:  {$subject_url}"
-
-            )
-        )
-    );
+    
     //此处添加用户对条目的信息
     $user_access_token=\access\get_access_token($type,$to,$from);
     if($user_access_token!=false){
@@ -817,33 +829,33 @@ else{
         //如果有收藏
         if(!array_key_exists("error",$data_user)){
             //status{id type name}
-            $su_status=$data_user['status'];
+            $su_status=&$data_user['status'];
             //rating
-            $su_rating=$data_user['rating'];
+            $su_rating=&$data_user['rating'];
             //comment
-            $su_comment=$data_user['comment'];
+            $su_comment=&$data_user['comment'];
             //ep_status
-            $su_ep=$data_user['ep_status'];
+            $su_ep=&$data_user['ep_status'];
             //user
-            $su_user=$data_user['user'];
-            $su_user_nick=$su_user['nickname'];
-            $su_user_avatar=$su_user['avatar']['large'];
-            $su_user_url=$su_user['url'];
+            $su_user=&$data_user['user'];
+            $su_user_nick=&$su_user['nickname'];
+            $su_user_avatar=&$su_user['avatar']['large'];
+            $su_user_url=&$su_user['url'];
 
-            $final_subject_rating=$subject_rating['score']==null?"":"<平均: {$subject_rating['score']}>";
-            $final_subject_eps=$subject_eps==null?"??":$subject_eps;
+            $final_subject_rating=$data['score']==null?"":"<平均: {$data['score']}>";
+            $final_subject_eps=$data['eps']==null?"??":$data['eps'];
             $user_rating_msg=$su_rating==0?"":"\n评分:  $su_rating   $final_subject_rating";
             $user_comment_msg=$su_comment==""?"":"\n吐槽:  $su_comment";
             $user_watched_msg=$su_ep==0?"":"\n完成度: $su_ep/$final_subject_eps \n";
             if($su_ep!=0){
             	//放送
             	date_default_timezone_set("Asia/Tokyo");
-            	$date1=date_create($subject_air_date);
+            	$date1=date_create($data['air_date']);
             	$date2=date_create(date("Y-m-d"));
             	$diff=date_diff($date1,$date2);
             	$day=$diff->format("%a");
                 if($diff->format("%R")=='+'){
-                    $aired_subject_eps=((1+intval($day/7.0))>$subject_eps)?$subject_eps:(1+intval($day/7.0));
+                    $aired_subject_eps=((1+intval($day/7.0))>$data['eps'])?$data['eps']:(1+intval($day/7.0));
                 }
 				else
                 {
@@ -877,7 +889,7 @@ else{
                 	{
                 		$user_watched_msg.="-Х";
                 	}
-                    for ($i=0;$i<$subject_eps-$aired_subject_eps;++$i)
+                    for ($i=0;$i<$data['eps']-$aired_subject_eps;++$i)
                     {
                         $user_watched_msg .= "-Λ";
                     }
@@ -888,7 +900,7 @@ else{
 
             }
             // 的第 [".$su_status['id']."] 个"
-            $user_subject_submsg="\n\n[{$su_user_nick}] 收藏为 [{$su_status['name']}]{$user_watched_msg}{$user_rating_msg}{$user_comment_msg}\n{$su_user_nick} 的主页:  $su_user_url";
+            $user_subject_submsg="\n[{$su_user_nick}] 收藏为 [{$su_status['name']}]{$user_watched_msg}{$user_rating_msg}{$user_comment_msg}\n{$su_user_nick} 的主页:  $su_user_url";
             $user_subject_msg=array(
                 array('type'=>"text",
                     'data'=>array(
@@ -923,197 +935,240 @@ else{
     }
     //分开发送
     \access\send_msg($type,$to,$msg,constant('token'));
-    $msg=array(
-        array('type'=>"text",
-            'data'=>array(
-                'text'=>"{$subject_name_cn_fin}{$subject_name_fin}"
-            )
-        ));
+
     //以下medium具备
-    //条目角色
+
+
     if($subject_group=='medium'){
-        $subject_crt=$data['crt'];
-        $character_num=count($subject_crt);
-        $start_msg=array(
-            array('type'=>"text",
-                'data'=>array(
-                    'text'=>"\n___________\n目前收录的角色数: $character_num\n\n"
-                )
-            )
-        );
-        $msg=array_merge($msg,$start_msg);
-        for($num=0;$num<$character_num;++$num) {
-            $character=$subject_crt[$num];
-            $character_url=$character['url'];
-            $character_name=$character['name'];
-            $character_name_cn=$character['name_cn'];
-            $character_role=$character['role_name'];
-            if($character['images']!=null){
-                $character_img=$character['images']['large'];
+            //test
+            //\access\send_msg('send_private_msg',597320012,"test:1",constant('token'));
+        //序列化
+        if($subject_group=='medium'&&$crt_cache_file){
+
+            if($re_with_cv){
+                $file_last_name='subject_crt_cv';
+                            //test
+            //\access\send_msg('send_private_msg',597320012,"test:1 cv",constant('token'));
+                
             }else{
-                $character_img="http://www.irisu.cc/res/no_img.gif";
+                $file_last_name='subject_crt';
+                            //test
+            //\access\send_msg('send_private_msg',597320012,"test:1 crt",constant('token'));
+                
             }
-
-            $character_comment_num=$character['comment'];
-            $character_collect_num=$character['collects'];
-
-            $character_info=$character['info'];
-
-            //名字
-            $character_name_final=($character_name==null||$character_name=="")?"":("\n日文名:  $character_name");
-            $character_name_cn_final=($character_name_cn==null||$character_name_cn=="")?"":("\n中文名:  $character_name_cn");
-
-            $character_info_alias=$character_info['alias'];
-            $character_alias_en=$character_info_alias['en']==null?"":("\n英文名:  {$character_info_alias['en']}");
-            $character_alias_kana=$character_info_alias['kana']==null?"":("\n假名:  {$character_info_alias['kana']}");
-            $character_alias_romaji=$character_info_alias['romaji']==null?"":("\n罗马音:  {$character_info_alias['romaji']}");
-            $character_alias_nick=$character_info_alias['nick']==null?"":("\n别名:  {$character_info_alias['nick']}");
-            $start_msg_character_alias_nick=$character_info_alias['nick']==null?"别名:":"        ";
-            $character_alias_nick_0=$character_info_alias['0']==null?"": ("\n{$start_msg_character_alias_nick}  {$character_info_alias['0']}");
-            $character_alias_nick_1=$character_info_alias['1']==null?"":("\n         {$character_info_alias['1']}");
-            $character_alias_nick_2=$character_info_alias['2']==null?"":("\n         {$character_info_alias['2']}");
-            //名字的结果字符串
-            $character_alias=$character_name_final.$character_name_cn_final.$character_alias_en.
-                                $character_alias_kana.$character_alias_romaji.$character_alias_nick.
-                                    $character_alias_nick_0.$character_alias_nick_1.$character_alias_nick_2;
-
-
-            $character_gender=$character_info['gender'];
-            $character_birth=$character_info['birth'];
-            $character_bloodtype=$character_info['bloodtype'];
-            $character_height=$character_info['height'];
-            $character_years=$character_info['年龄'];
-
-            //个人资料
-            $character_gender_fin=$character_gender==null?"":("\n性别:  $character_gender");
-            $character_years_fin=$character_years==null?"":("\n年龄:  $character_years");
-            $character_birth_fin=$character_birth==null?"":("\n生日:  $character_birth");
-            $character_bloodtype_fin=$character_bloodtype==null?"":("\n血型:  $character_bloodtype");
-            $character_height_fin=$character_height==null?"":("\n身高:  $character_height");
-            //个人资料的结果字符串
-            $character_infomation_fin="{$character_gender_fin}{$character_years_fin}{$character_birth_fin}{$character_bloodtype_fin}{$character_height_fin}";
-
-            //可能多个CV
-            $actor_msg_fin=array( array(
-                'type'=>"text",
-                'data'=>array(
-                    'text'=>""
-                )
-            ));
-            $actor_size=count($character['actors']);
-            //应对CV为空的情况
-            if($re_with_cv&&$actor_size==0){
-                $actor_msg_fin=array(
-                    array(
-                        'type'=>"text",
-                        'data'=>array(
-                            'text'=>"CV:  "
-                        )
-                    ),
-                    array(
-                        'type'=>"text",
-                        'data'=>array(
-                            'text'=>"未收录\n\n"
-                        )
-                    )
-                );
-            }
-            for($actor_num=0;$re_with_cv&&$actor_num<$actor_size;++$actor_num){
-                $character_actor=$character['actors'][$actor_num];
-                $actor_url=$character_actor['url'];
-                $actor_name=$character_actor['name'];
-                if($character_actor['images']!=null){
-                    $actor_img=$character_actor['images']['large'];
-                }else{
-                    $actor_img="http://www.irisu.cc/res/no_img.gif";
-                }
-
-
-                //声优
-                //声优最终头像
-                $actor_msg_img_fin=array(
-                    array(
-                        'type'=>"text",
-                        'data'=>array(
-                            'text'=>"CV:  "
-                        )
-                    ),
-                    array(
-                        'type'=>"text",
-                        'data'=>array(
-                            'text'=>"未收录"
-                        )
-                    )
-                );
-                //处理声优最终头像
-                if($actor_url!=null)
-                {
-                    $actor_num_msg=$actor_size>1?(' ('.($actor_num+1).')'):"";
-                    $actor_msg_img_fin[0]['data']['text']="CV{$actor_num_msg}:\n";
-                    $actor_msg_img_fin[1]['type']="image";
-                    $actor_msg_img_fin[1]['data']=array(
-                        'file'=>$actor_img
-                    );
-                }
-                //声优其他信息
-                $actor_name_fin=$actor_name==null?"":("\n姓名:  $actor_name");
-                $actor_url_fin=$actor_url==null?"":("\nCV主页:  $actor_url");
-                //声优信息的结果字符串
-                $actor_msg_text_fin=array(
-                    array('type'=>"text",
-                        'data'=>array(
-                            'text'=>
-                                "{$actor_name_fin}{$actor_url_fin}\n".($actor_size-1==$actor_num?"----------------\n\n":"\n")
-                        )
-                    ),
-                );
-
-                $actor_msg_fin=array_merge($actor_msg_fin,array_merge($actor_msg_img_fin,$actor_msg_text_fin));
-
-            }
-
-
-            $character_msg=array(
-                array('type'=>"image",
-                    'data'=>array(
-                        'file'=>$character_img
-                    )
-                ),
+            $msg=\access\read_file($file_last_name,$subject_id);
+        }
+        //no file
+        if($msg===false||!$crt_cache_file){
+                        //test
+            //\access\send_msg('send_private_msg',597320012,"test:2",constant('token'));
+            //init
+            $msg=array(
                 array('type'=>"text",
                     'data'=>array(
-                        'text'=>
-                            "{$character_alias}{$character_infomation_fin}\n角色主页:  {$character_url}\n"
-                    )
+                    'text'=>"{$data['name_cn']}{$data['name']}"
                 )
-//                array('type'=>"image",
-//                    'data'=>array(
-//                        'file'=>$actor_img
-//                    )
-//                ),
-//                array('type'=>"text",
-//                    'data'=>array(
-//                        'text'=>
-//                            "\n姓名:  ".$acteor_nam.
-//                            "\n主页:  ".$actor_url.
-//                            "\n_________\n\n"
-//                    )
-//                )
-            );
-            //如果是附加cv信息
+            ));
+            //条目角色
+            if($subject_group=='medium'){
+                $subject_crt=$data['crt'];
+                $character_num=count($subject_crt);
+                $start_msg=array(
+                    array('type'=>"text",
+                        'data'=>array(
+                            'text'=>"\n___________\n目前收录的角色数: $character_num\n\n"
+                        )
+                    )
+                );
+                            //test
+            //\access\send_msg('send_private_msg',597320012,"test:2 num=$character_num",constant('token'));
+                $msg=array_merge($msg,$start_msg);
+                //loop
+                for($num=0;$num<$character_num;++$num) {
+                    $character=&$subject_crt[$num];
+                    $character_url=&$character['url'];
+                    $character_name=&$character['name'];
+                    $character_name_cn=&$character['name_cn'];
+                    $character_role=$character['role_name'];
+                    if($character['images']!=null){
+                        $character_img=&$character['images']['large'];
+                    }else{
+                        $character_img="http://www.irisu.cc/res/no_img.gif";
+                    }
+
+                    $character_comment_num=&$character['comment'];
+                    $character_collect_num=&$character['collects'];
+
+                    $character_info=&$character['info'];
+
+                    //名字
+                    $character_name_final=($character_name==null||$character_name=="")?"":("\n日文名:  $character_name");
+                    $character_name_cn_final=($character_name_cn==null||$character_name_cn=="")?"":("\n中文名:  $character_name_cn");
+
+                    $character_info_alias=&$character_info['alias'];
+                    $character_alias_en=$character_info_alias['en']==null?"":("\n英文名:  {$character_info_alias['en']}");
+                    $character_alias_kana=$character_info_alias['kana']==null?"":("\n假名:  {$character_info_alias['kana']}");
+                    $character_alias_romaji=$character_info_alias['romaji']==null?"":("\n罗马音:  {$character_info_alias['romaji']}");
+                    $character_alias_nick=$character_info_alias['nick']==null?"":("\n别名:  {$character_info_alias['nick']}");
+                    $start_msg_character_alias_nick=$character_info_alias['nick']==null?"别名:":"        ";
+                    $character_alias_nick_0=$character_info_alias['0']==null?"": ("\n{$start_msg_character_alias_nick}  {$character_info_alias['0']}");
+                    $character_alias_nick_1=$character_info_alias['1']==null?"":("\n         {$character_info_alias['1']}");
+                    $character_alias_nick_2=$character_info_alias['2']==null?"":("\n         {$character_info_alias['2']}");
+                    //名字的结果字符串
+                    $character_alias="{$character_name_final}{$character_name_cn_final}{$character_alias_en}{$character_alias_kana}{$character_alias_romaji}{$character_alias_nick}{$character_alias_nick_0}{$character_alias_nick_1}{$character_alias_nick_2}";
+
+
+                    $character_gender=&$character_info['gender'];
+                    $character_birth=&$character_info['birth'];
+                    $character_bloodtype=&$character_info['bloodtype'];
+                    $character_height=&$character_info['height'];
+                    $character_years=&$character_info['年龄'];
+
+                    //个人资料
+                    $character_gender_fin=$character_gender==null?"":("\n性别:  $character_gender");
+                    $character_years_fin=$character_years==null?"":("\n年龄:  $character_years");
+                    $character_birth_fin=$character_birth==null?"":("\n生日:  $character_birth");
+                    $character_bloodtype_fin=$character_bloodtype==null?"":("\n血型:  $character_bloodtype");
+                    $character_height_fin=$character_height==null?"":("\n身高:  $character_height");
+                    //个人资料的结果字符串
+                    $character_infomation_fin="{$character_gender_fin}{$character_years_fin}{$character_birth_fin}{$character_bloodtype_fin}{$character_height_fin}";
+
+                    //可能多个CV
+                    $actor_msg_fin=array( array(
+                        'type'=>"text",
+                        'data'=>array(
+                            'text'=>""
+                        )
+                    ));
+                    $actor_size=count($character['actors']);
+                    //应对CV为空的情况
+                    if($re_with_cv&&$actor_size==0){
+                        $actor_msg_fin=array(
+                            array(
+                                'type'=>"text",
+                                'data'=>array(
+                                    'text'=>"CV:  "
+                                )
+                            ),
+                            array(
+                                'type'=>"text",
+                                'data'=>array(
+                                    'text'=>"未收录\n\n"
+                                )
+                            )
+                        );
+                    }
+                    for($actor_num=0;$re_with_cv&&$actor_num<$actor_size;++$actor_num){
+                        $character_actor=&$character['actors'][$actor_num];
+                        $actor_url=&$character_actor['url'];
+                        $actor_name=&$character_actor['name'];
+                        if($character_actor['images']!=null){
+                            $actor_img=&$character_actor['images']['large'];
+                        }else{
+                            $actor_img="http://www.irisu.cc/res/no_img.gif";
+                        }
+
+
+                        //声优
+                        //声优最终头像
+                        $actor_msg_img_fin=array(
+                            array(
+                                'type'=>"text",
+                                'data'=>array(
+                                    'text'=>"CV:  "
+                                )
+                            ),
+                            array(
+                                'type'=>"text",
+                                'data'=>array(
+                                    'text'=>"未收录"
+                                )
+                            )
+                        );
+                        //处理声优最终头像
+                        if($actor_url!=null)
+                        {
+                            $actor_num_msg=$actor_size>1?(' ('.($actor_num+1).')'):"";
+                            $actor_msg_img_fin[0]['data']['text']="CV{$actor_num_msg}:\n";
+                            $actor_msg_img_fin[1]['type']="image";
+                            $actor_msg_img_fin[1]['data']=array(
+                                'file'=>$actor_img
+                            );
+                        }
+                        //声优其他信息
+                        $actor_name_fin=$actor_name==null?"":("\n姓名:  $actor_name");
+                        $actor_url_fin=$actor_url==null?"":("\nCV主页:  $actor_url");
+                        //声优信息的结果字符串
+                        $actor_msg_text_fin=array(
+                            array('type'=>"text",
+                                'data'=>array(
+                                    'text'=>
+                                        "{$actor_name_fin}{$actor_url_fin}\n".($actor_size-1==$actor_num?"----------------\n\n":"\n")
+                                )
+                            ),
+                        );
+
+                        $actor_msg_fin=array_merge($actor_msg_fin,array_merge($actor_msg_img_fin,$actor_msg_text_fin));
+
+                    }
+
+
+                    $character_msg=array(
+                        array('type'=>"image",
+                            'data'=>array(
+                                'file'=>$character_img
+                            )
+                        ),
+                        array('type'=>"text",
+                            'data'=>array(
+                                'text'=>
+                                    "{$character_alias}{$character_infomation_fin}\n角色主页:  {$character_url}\n"
+                            )
+                        )
+
+                    );
+                    //如果是附加cv信息
+                    if($re_with_cv){
+                        //合并角色和声优msg到角色msg中
+                        $character_msg=array_merge($character_msg,$actor_msg_fin);
+                    }
+                    else{
+                        $character_msg[1]['data']['text'].="\n";
+                    }
+
+
+                    $msg=array_merge($msg,$character_msg);
+
+
+                //end loop
+                }
+
+            //save file
             if($re_with_cv){
-                //合并角色和声优msg到角色msg中
-                $character_msg=array_merge($character_msg,$actor_msg_fin);
+                $file_last_name='subject_crt_cv';
+            }else{
+                $file_last_name='subject_crt';
             }
-            else{
-                $character_msg[1]['data']['text'].="\n";
-            }
+            $serialize_data=serialize($msg);
+            //序列化
+            file_put_contents(constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",$serialize_data);
 
-
-            $msg=array_merge($msg,$character_msg);
-
+        //end  条目角色  
         }
-        \access\send_msg($type,$to,$msg,constant('token'));
+
+
+                                    //test
+            //\access\send_msg('send_private_msg',597320012,"test:3",constant('token'));
+
+            
+        //end no file  
+        }
+                                            //test
+            //\access\send_msg('send_private_msg',597320012,"test:4",constant('token'));
+            \access\send_msg($type,$to,$msg,constant('token'));
+    //end if($subject_group=='medium')  
     }
+
 
 
 

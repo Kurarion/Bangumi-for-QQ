@@ -48,6 +48,8 @@ $re_msg=array(
 );
 //msg
 $msg=$data['message'];
+//从文件中读取
+$file=$msg[0]=='~'?1:0;
 //处理msg
 /*
  * 初始计划：
@@ -321,16 +323,19 @@ echo "\n".$php;
 //消息发送者的QQ号码
 $php.="&from={$sub_from}";
 $php.='&access='.constant("password");
+//是否读取缓存
+$php.="&file={$file}";
 echo "\n".$php;
 //至此 $php=./api/user/bangumi_user.php?username=???&type=private&to=???&access=???
 //跳转对应php处理
-
 $url="http://127.0.0.1/bangumi{$php}";
 echo "\n".$url;
 //提示开始处理
 //$re_msg[0]['data']['text']="受理中~\n但...也许会有神秘电波干扰...祈祷中...";
 $re_msg[0]['data']['text']="祈祷中...";
 \access\send_msg("send_{$type}_msg",$from,$re_msg,constant("token"));
+//test
+//\access\send_msg("send_{$type}_msg",$from,$url,constant("token"));
 file_get_contents($url);
 
 
