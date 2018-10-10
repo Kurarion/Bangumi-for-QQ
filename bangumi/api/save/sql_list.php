@@ -118,7 +118,7 @@ if($row!=false){
         //\access\send_msg($type,$to,"path:".constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",constant('token'));
         //test
         //\access\send_msg('send_private_msg',597320012,"sql_save:".dirname(__FILE__),constant('token'));
-
+        $re_msg0="[List]<$save_id>:\n";
         if($cache_file){
 
             //test
@@ -130,11 +130,11 @@ if($row!=false){
         }else{
             //https://api.bgm.tv/subject/109956
             $re_msg1=$data['images']['large']!=null?"[CQ:image,file={$data['images']['large']}]":"";
-            $re_msg2="\n[List]<$save_id>: $subject_id";
+            //$re_msg2="\n[List]<$save_id>: $subject_id";
             $re_msg3=$data['name_cn']!=""?"\n中文名:  {$data['name_cn']}":"";
             $re_msg4=$data['name']!=""?"\n原名:  {$data['name']}":"";
             $type2name_result=$type2name[$data['type']];
-            $re_msg5=$data['type']!=""?"\n类型:  {$type2name_result}":"";
+            $re_msg5=$data['type']!=""?"\n类型:  {$type2name_result}      ID: $subject_id":"\nID: $subject_id";
             $re_msg6=$data['air_date']=="0000-00-00"||$data['air_date']==null?"":"\n放送日期:  {$data['air_date']}";
 
             if($data['air_weekday']==null){
@@ -146,7 +146,7 @@ if($row!=false){
             
             $re_msg8=$data['url']!=""?"\nUrl:  {$data['url']}":"";
 
-            $re_msg="{$re_msg1}{$re_msg2}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}";
+            $re_msg="{$re_msg1}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}";
 
             //test
             //\access\send_msg('send_private_msg',597320012,"test:false",constant('token'));
@@ -156,7 +156,7 @@ if($row!=false){
             //序列化
             file_put_contents(constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",$serialize_data);
         }
-
+        $re_msg="{$re_msg0}{$re_msg}";
         //此处添加用户对条目的信息
         //$user_access_token=\access\get_access_token($type,$to,$from);
         if($user_access_token!=false){
@@ -337,7 +337,8 @@ if($row!=false){
                 //\access\send_msg($type,$to,"path:".constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",constant('token'));
                 //test
                 //\access\send_msg('send_private_msg',597320012,"sql_save:".dirname(__FILE__),constant('token'));
-
+                $re_msg0="[List]<$i>:\n";
+                $re_msg.=$re_msg0;
                 if($cache_file){
 
                     //test
@@ -349,11 +350,11 @@ if($row!=false){
                 }else{
                     //https://api.bgm.tv/subject/109956
                     $re_msg1=$data['images']['large']!=null&&$list_detail?"[CQ:image,file={$data['images']['large']}]":"";
-                    $re_msg2="\n[List]<$i>: $subject_id";
+                    //$re_msg2="\n[List]<$i>: $subject_id";
                     $re_msg3=$data['name_cn']!=""?"\n中文名:  {$data['name_cn']}":"";
                     $re_msg4=$data['name']!=""?"\n原名:  {$data['name']}":"";
                     $type2name_result=$type2name[$data['type']];
-                    $re_msg5=$data['type']!=""?"\n类型:  {$type2name_result}":"";
+                    $re_msg5=$data['type']!=""?"\n类型:  {$type2name_result}      ID: $subject_id":"\nID: $subject_id";
                     $re_msg6=($data['air_date']=="0000-00-00"||$data['air_date']==null)?"":"\n放送日期:  {$data['air_date']}";
 
                     if($data['air_weekday']==null){
@@ -375,6 +376,7 @@ if($row!=false){
                     //序列化
                     file_put_contents(constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",$serialize_data);
                 }
+                //$re_msg="{$re_msg0}{$re_msg}";
 
 
                 //
