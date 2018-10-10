@@ -711,7 +711,7 @@ if($need_bgm_api){
  * }
  */
 //判断是否无效
-if(($subject_id==null||array_key_exists('error',$data)||!(array_key_exists('id',$data)))&&!$cache_file)
+if(($subject_id==null||array_key_exists('error',$data)||!(array_key_exists('id',$data)))&&($subject_id==0||!$cache_file))
 {
     //未找到...
     $msg=array(
