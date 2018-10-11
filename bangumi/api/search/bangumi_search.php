@@ -14,13 +14,14 @@ $type='send_'.$_GET['type'].'_msg';
 $to=$_GET['to'];
 //$from=$_GET['from'];
 //bangumi api URL
-$search_string=$_GET['search_string'];
+$search_string=urlencode(str_replace('+', ' ', $_GET['search_string']));
 $search_type=$_GET['search_type']!=null?$_GET['search_type']:0;
 $search_start=$_GET['search_start']!=null?$_GET['search_start']:0;
 $search_max=$_GET['search_max']!=null?$_GET['search_max']:5;
 //$user_access_token=\access\get_access_token($type,$to,$from);
 //.'&access_token='.$user_access_token
-$url='https://api.bgm.tv/search/subject/'.$search_string.'?type='.$search_type.'&start='.$search_start.'&max_results='.$search_max;
+$url="https://api.bgm.tv/search/subject/{$search_string}?type={$search_type}&start={$search_start}&max_results={$search_max}";
+//\access\send_msg($type,$to,$url,constant('token'));
 //bangumi JSON
 $json=file_get_contents($url);
 $data=json_decode($json,true);
@@ -74,8 +75,8 @@ $data=json_decode($json,true);
 //echo $json;
 //\access\send_msg($type,$to,$url."  \n ".var_export($json),constant('token'));
 //判断是否无效
-//注意这里result默认存在一个Null，因此实际结果数是number-1
-if($search_string==null||array_key_exists('error',$data)||(array_key_exists('results',$data)?$data['results']<2:ture))
+//注意这里result默认存在一个Null，因此实际结果数是number-1(废弃)
+if($search_string==null||array_key_exists('error',$data)||(array_key_exists('results',$data)?$data['results']<1:ture))
 {
     //未找到...
     $msg=array(
