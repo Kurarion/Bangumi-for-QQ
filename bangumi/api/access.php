@@ -398,6 +398,7 @@ namespace access{
     //只会返回false和正确的ID号
     function read_save($type,$to,$from,$save_id){
         if(is_numeric($save_id)&&$save_id>0&&$save_id<constant("max_list")){
+            //$use_search=false;
             if((int)$save_id==0){
                 return get_last_subject($type,$to,$from);
             }
@@ -414,7 +415,7 @@ namespace access{
                 return $row[0];
             }
         }
-        else{
+        elseif($save_id[0]!='.'){
             $right_id=0;
             $right_num=-1;
             $get_save_sql="select *
@@ -424,6 +425,7 @@ namespace access{
             $row=mysqli_fetch_array($result,MYSQLI_ASSOC);
             //查找具体的
             if($row==0||$row==false){
+                    //$use_search=true;
                     return false;//2
             }
             //识别Right_ID
@@ -452,9 +454,15 @@ namespace access{
                 $right_id=$row["subject_{$right_num}"];
                 return $right_id;
             }else{
+                //$use_search=true;
                 return false;//3
             }
             
+        }else{
+
+            return search_subject_id($save_id);
+
+
         }
 
 
@@ -503,6 +511,40 @@ namespace access{
         }else{
             return false;
         }
+    }
+    //search subject id
+    function search_subject_id($str){
+        //解析
+        $para=explode('.', $str);
+        $para[1]=str_replace('+', ' ', $para[1]);
+        $search_string=urlencode($para[1]!=null?$para[1]:'XXXXXX');
+        $search_type=$para[2]!=null?$para[2]:2;
+        $search_start=$para[3]!=null?$para[3]:0;
+        //url
+        $url="https://api.bgm.tv/search/subject/{$search_string}?type={$search_type}&start={$search_start}&max_results=3";
+        //request
+        //bangumi JSON
+        $json=file_get_contents($url,0,null,0,46);
+        if(false!==strpos($json,'request')||false!==strpos($json,'null')||false!==strpos($json, 'html')){
+
+            //test
+            //\access\send_msg('send_private_msg',597320012,"url:$url ",constant('token'));
+            return false;  
+            
+        }else{
+
+            //$data=json_decode($json,true);
+            $before_id=substr($json, strpos($json, "\"id\":")+5);           
+            $para=explode(',', $before_id);
+            $id=$para[0];
+            //test
+            //\access\send_msg('send_private_msg',597320012,"url:$url \nbefore_id:$before_id \njson:$json \nid:$id",constant('token'));
+            return $id;
+
+        }
+        
+
+
     }
 }
 

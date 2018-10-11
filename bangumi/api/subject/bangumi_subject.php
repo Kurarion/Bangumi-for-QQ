@@ -722,7 +722,7 @@ if(($subject_id==null||array_key_exists('error',$data)||!(array_key_exists('id',
         )
     );
     if($use_save){
-        $msg[0]['data']['text']="我不认为你有用过这个位置...";
+        $msg[0]['data']['text']="我不认为你有用过相关背包位或没能搜到这样的条目...";
     }
     if($use_last){
         $msg[0]['data']['text']="只有使用过~subject 的魔法少女才能驾驭这样的魔法";
