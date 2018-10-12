@@ -54,8 +54,10 @@ if(false===strrpos($rss_file,"</rss>")){
 //test
 //file_put_contents('test.xml',$rss_file);
 
+//名字集合
+$name_list="-----<全部资源>-----";
 //链接集合
-$torrent_list="按顺序链接依次:";
+$torrent_list="\n\n-----<链接>-----";
 
 if($xml=simplexml_load_string($rss_file)){
     //将 SimpleXMLElement 转化为普通数组
@@ -85,6 +87,10 @@ if($xml=simplexml_load_string($rss_file)){
                 //echo $item->getName() . ": " . $item . "\n\r";
                 switch ($item->getName()){
                     case "title":
+                        //
+                        if($itemNum<=$max_items){
+                        $name_list.="\n$item";}
+                        //
                         $currentItemMsg.="\n$item";
                         break;
                     case "link":
@@ -195,5 +201,6 @@ if($need_reply&&($itemNum-1)%constant("once_items_num")!=0){
     \access\send_msg($type,$to ,$msg,constant('token'));
 }
 if($need_reply){
-    \access\send_msg($type,$to ,$torrent_list,constant('token'));
+    $name_list.=$torrent_list;
+    \access\send_msg($type,$to ,$name_list,constant('token'));
 }
