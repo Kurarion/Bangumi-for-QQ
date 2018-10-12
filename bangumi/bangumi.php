@@ -203,8 +203,15 @@ switch ($low_msg[1]){
     case 'r':
         if(1==strpos($low_msg,"reg")){
             $php.="/auth/bangumi_send_auth_site.php?";
-            break;
+        }elseif(1==strpos($low_msg,"rss")){
+        	$php.="/dmhy/dmhy_moe.php?";
+            $para=explode(" ",$msg);
+            $size=count($para);
+            $command=$size>1?urlencode($para[1]):null;
+            $parameter=$size>2?urlencode($para[2]):null;
+            $php.="command={$command}&parameter={$parameter}&";     
         }
+        break;
         //没有else以便识别radio，顺便在之后的re_msg中加入相关提示
     case 'f':
         if(1==strpos($low_msg,"radio")||1==strpos($low_msg,"fm")){
@@ -229,28 +236,20 @@ switch ($low_msg[1]){
         $dead=true;
         break;
     case 'd':
-        if(1==strpos($low_msg,"dmhydl")){
+        if(1==strpos($low_msg,"dmhy")){
             $php.="/dmhy/dmhy_moe_search.php?";
             $para=explode(" ",$msg);
             $size=count($para);
             $keyword=$size>1?urlencode($para[1]):null;
             $max_items=$size>2?urlencode($para[2]):null;
             $php.="dmhymoe=1&keyword={$keyword}&max={$max_items}&";                
-        }elseif(1==strpos($low_msg,"dmhy")){
-            $php.="/dmhy/dmhy_moe.php?";
-            $para=explode(" ",$msg);
-            $size=count($para);
-            $command=$size>1?urlencode($para[1]):null;
-            $parameter=$size>2?urlencode($para[2]):null;
-            $php.="command={$command}&parameter={$parameter}&";            
-        }
-        else{
+        }else{
             $re_msg[0]['data']['text']="~dmhy是相关订阅资源的功能\n当然这只能给魔法少女使用哦~\n【----具体使用----】\n施工中...";
             $dead=true;
         }
         break;
     case 'm':
-        if(1==strpos($low_msg,"moedl")){
+        if(1==strpos($low_msg,"moe")){
             $php.="/dmhy/dmhy_moe_search.php?";
             $para=explode(" ",$msg);
             $size=count($para);
