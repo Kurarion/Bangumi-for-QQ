@@ -6,6 +6,7 @@
  * Time: 0:52
  */
 require_once '../access.php';
+require_once './dmhy.php';
 //access
 if(empty($argv[1])) {
     die("No auth");
@@ -15,38 +16,7 @@ else {
     constant('password')==$argv[1]?:die("error auth");
     echo "access";
 }
-//常量
-define("max_items",20);
-define("once_items_num",4);
-//描述文本处理函数
-function DescriptionDecode($description){
-    //$decode_subject_id=$description[strpos($description," src=\"")+1];
-    if(strpos($description,"src=\"")!==false){
-        $first_sub=substr($description,strpos($description,"src=\"")+5);
-        $pic_url=substr($first_sub,0,strpos($first_sub,"\""));
-        //echo $first_sub."55555\n";
-        //echo "66666\n".$pic_url."55555\n";
-        return $pic_url;
-    }else{
-        return "http://www.irisu.cc/res/no_img.gif";
-    }
 
-}
-//将种子中文转换URLENCODE
-function TorrentEncode($torrent){
-    if(strrpos($torrent,"/")!==false){
-        $start=strrpos($torrent,"/")+1;
-        $torrentName=substr($torrent,$start);
-        //echo "\n".$start;
-        //echo "\n".$torrentName;
-        //echo "\n".$torrent;
-        //echo "\n".urlencode($torrentName);
-        //echo "\n".substr_replace($torrent,urlencode($torrentName),$start);
-        return substr_replace($torrent,urlencode($torrentName),$start);
-    }else{
-        return $torrent;
-    }
-}
 //默认只支持个人发送
 $type='send_private_msg';
 //所有要发送的用户
@@ -99,8 +69,16 @@ for($i=0;$i<count($send_users);++$i){
 	    //file get
 	    $rss_file=file_get_contents($url,0,null,0,120000);
 	    //file_put_contents('test.xml',$rss_file);
-	    $last_item=strrpos($rss_file,"<item>");
-	    $rss_file=substr($rss_file,0,($last_item))."</channel></rss>";
+		//处理xml
+		if(false===strrpos($rss_file,"</rss>")){
+		    $last_item=strrpos($rss_file,"<item>");
+		    $over_last_item=strrpos($rss_file,"</item>");
+		    if($over_last_item>$last_item){
+		        $last_item=$over_last_item+7;
+		    }
+		    $rss_file=substr($rss_file,0,($last_item))."</channel></rss>";
+		}
+
 	    file_put_contents($file_name,$rss_file);
     }
     //load xml
@@ -160,7 +138,7 @@ for($i=0;$i<count($send_users);++$i){
                             break;
                         case "description":
                             //$currentItemMsg.="\n描述: ".$item;
-                            $pic_url=DescriptionDecode($item);
+                            $pic_url=\dmhy\DescriptionDecode($item);
                             if($pic_url!==false){
                                 $currentItemMsg="\n----------------\n[CQ:image,file={$pic_url}]{$currentItemMsg}";
                             }
@@ -174,7 +152,7 @@ for($i=0;$i<count($send_users);++$i){
                                 $currentItemMsg.="\n磁力链接:\n$magnet[0]";
                             }else{
                                 //moe
-                                $TorrentEncode_result=TorrentEncode($item->attributes());
+                                $TorrentEncode_result=\dmhy\TorrentEncode($item->attributes());
                                 $currentItemMsg.="\n种子链接:\n$TorrentEncode_result";
                             }
 

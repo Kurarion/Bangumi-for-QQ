@@ -229,15 +229,36 @@ switch ($low_msg[1]){
         $dead=true;
         break;
     case 'd':
-        if(1==strpos($low_msg,"dmhy")){
+        if(1==strpos($low_msg,"dmhydl")){
+            $php.="/dmhy/dmhy_moe_search.php?";
+            $para=explode(" ",$msg);
+            $size=count($para);
+            $keyword=$size>1?urlencode($para[1]):null;
+            $max_items=$size>2?urlencode($para[2]):null;
+            $php.="dmhymoe=1&keyword={$keyword}&max={$max_items}&";                
+        }elseif(1==strpos($low_msg,"dmhy")){
             $php.="/dmhy/dmhy_moe.php?";
             $para=explode(" ",$msg);
             $size=count($para);
             $command=$size>1?urlencode($para[1]):null;
             $parameter=$size>2?urlencode($para[2]):null;
-            $php.="command={$command}&parameter={$parameter}&";
-        }else{
+            $php.="command={$command}&parameter={$parameter}&";            
+        }
+        else{
             $re_msg[0]['data']['text']="~dmhy是相关订阅资源的功能\n当然这只能给魔法少女使用哦~\n【----具体使用----】\n施工中...";
+            $dead=true;
+        }
+        break;
+    case 'm':
+        if(1==strpos($low_msg,"moedl")){
+            $php.="/dmhy/dmhy_moe_search.php?";
+            $para=explode(" ",$msg);
+            $size=count($para);
+            $keyword=$size>1?urlencode($para[1]):null;
+            $max_items=$size>2?urlencode($para[2]):null;
+            $php.="dmhymoe=0&keyword={$keyword}&max={$max_items}&";                
+        }else{
+            $re_msg[0]['data']['text']="~moedl搜索萌番组资源的功能...\n【----具体使用----】\n施工中...";
             $dead=true;
         }
         break;
