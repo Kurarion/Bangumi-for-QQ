@@ -122,6 +122,8 @@ if($xml=simplexml_load_string($rss_file)){
                         $pic_url=\dmhy\DescriptionDecode($item);
                         if($pic_url!==false){
                             $currentItemMsg="\n----------------\n[CQ:image,file={$pic_url}]{$currentItemMsg}";
+                            //test
+                            //\access\send_msg($type,$to ,$pic_url,constant('token'));
                         }
 
                         break;

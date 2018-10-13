@@ -11,6 +11,29 @@ namespace dmhy{
 	        $pic_url=substr($first_sub,0,strpos($first_sub,"\""));
 	        //echo $first_sub."55555\n";
 	        //echo "66666\n".$pic_url."55555\n";
+
+	        // $file_name=substr(bin2hex($pic_url),-16);
+	        // $extra_name=substr($pic_url,-4);
+	        // $file_path="./IMG/{$file_name}{$extra_name}";
+	        
+	        // $cache=file_exists($file_path);
+	        // $file_path="http://127.0.0.1/bangumi/api/dmhy/IMG/{$file_name}{$extra_name}";
+	        // if($cache===false){
+	        // 	//
+		        
+		       //  $orgin_file_name='';
+		       //  $orgin_file_name.=$file_name;
+
+		       //  $orgin_file_path="./IMG/{$orgin_file_name}{$extra_name}";
+
+		       //  //
+	        // 	$pic=file_get_contents($pic_url);
+	        // 	file_put_contents($orgin_file_path, $pic);
+	        // 	header('Content-Type: image/jpeg');
+	        // 	imagejpeg($orgin_file_path,$file_path,75);
+	        // 	//$cache=file_get_contents($file_path);	        	
+	        // }
+
 	        return $pic_url;
 	    }else{
 	        return "http://www.irisu.cc/res/no_img.gif";
