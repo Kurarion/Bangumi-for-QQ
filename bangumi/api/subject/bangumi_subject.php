@@ -39,7 +39,7 @@ if($subject_id!=null&&!is_numeric($subject_id)){
     if(false!==$site){
         $decode_subject_id=$subject_id[$site+1];
         $maybe_second_id=$subject_id[$site+2];
-        if(is_numeric($maybe_second_id)){
+        if(is_numeric($maybe_second_id)&&is_numeric($decode_subject_id)){
             $decode_subject_id=$decode_subject_id*10+$maybe_second_id;
         }
         //\access\send_msg($type,$to,"$decode_subject_id----",constant('token'));
@@ -144,7 +144,11 @@ if($need_bgm_api){
     // $json=file_get_contents($url);
     // $data=json_decode($json,true);
     //请求Bangumi api 函数
-    $file_last_name='subject_one';
+    if($subject_group=='medium'){
+        $file_last_name='subject_one_detail';
+    }else{
+        $file_last_name='subject_one';   
+    }
     list($data,$cache_file)=\access\request_subject($file_last_name,$subject_id,$cache_file,$subject_group);
 }else{
     $subject_id=0;
@@ -734,7 +738,8 @@ else{
     if($cache_file){
         //从文件中读取
         $msg=$data['msg'];
-        //\access\send_msg($type,$to,$msg,constant('token'));
+        //test
+        //\access\send_msg($type,$to,"subject cache",constant('token'));
     }else{
         //条目基本信息
         $subject_url=&$data['url'];
@@ -959,7 +964,9 @@ else{
             $msg=\access\read_file($file_last_name,$subject_id);
         }
         //no file
-        if($msg===false||!$crt_cache_file){
+        if($msg==false||!$crt_cache_file){
+            //test
+            //\access\send_msg($type,$to,"subject cv no cache",constant('token'));
                         //test
             //\access\send_msg('send_private_msg',597320012,"test:2",constant('token'));
             //init

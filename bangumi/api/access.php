@@ -397,7 +397,7 @@ namespace access{
     //用于获得save中指定id的subject id 这里为了方便如果使用了编号为0的save则重定向到last subject
     //只会返回false和正确的ID号
     function read_save($type,$to,$from,$save_id){
-        if(is_numeric($save_id)&&$save_id>0&&$save_id<constant("max_list")){
+        if($save_id[0]!='.'&&is_numeric($save_id)&&$save_id>0&&$save_id<constant("max_list")){
             //$use_search=false;
             if((int)$save_id==0){
                 return get_last_subject($type,$to,$from);
