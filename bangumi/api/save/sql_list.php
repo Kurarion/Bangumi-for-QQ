@@ -337,46 +337,6 @@ if($row!=false){
                 //\access\send_msg($type,$to,"path:".constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",constant('token'));
                 //test
                 //\access\send_msg('send_private_msg',597320012,"sql_save:".dirname(__FILE__),constant('token'));
-                $re_msg0="[List]<$i>:\n";
-                $re_msg.=$re_msg0;
-                if($cache_file){
-
-                    //test
-                    //\access\send_msg('send_private_msg',597320012,"test:true",constant('token'));
-
-                    //从文件中读取
-                    $re_msg.=$data['msg'];
-
-                }else{
-                    //https://api.bgm.tv/subject/109956
-                    $re_msg1=$data['images']['large']!=null&&$list_detail?"[CQ:image,file={$data['images']['large']}]":"";
-                    //$re_msg2="\n[List]<$i>: $subject_id";
-                    $re_msg3=$data['name_cn']!=""?"\n中文名:  {$data['name_cn']}":"";
-                    $re_msg4=$data['name']!=""?"\n原名:  {$data['name']}":"";
-                    $type2name_result=$type2name[$data['type']];
-                    $re_msg5=$data['type']!=""?"\n类型:  {$type2name_result}      ID: $subject_id":"\nID: $subject_id";
-                    $re_msg6=($data['air_date']=="0000-00-00"||$data['air_date']==null)?"":"\n放送日期:  {$data['air_date']}";
-
-                    if($data['air_weekday']==null){
-                        $re_msg7=null;
-                    }else{
-                        $int2weekday_result=$int2weekday[$data['air_weekday']];
-                        $re_msg7="\n放送星期:   $int2weekday_result";
-                    }
-                    
-                    $re_msg8=$data['url']!=""?"\nUrl:  {$data['url']}":"";
-
-                    $sub_re_msg="{$re_msg1}{$re_msg2}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}\n";
-                    $re_msg.=$sub_re_msg;
-                    //test
-                    //\access\send_msg('send_private_msg',597320012,"test:false",constant('token'));
-                    //array
-                    $data_array=array('msg'=>$sub_re_msg,'eps_count'=>$data['eps_count'],'rating'=>$data['rating'],'air_date'=>$data['air_date'],'name'=>$data['name'],'name_cn'=>$data['name_cn']);
-                    $serialize_data=serialize($data_array);
-                    //序列化
-                    file_put_contents(constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",$serialize_data);
-                }
-                //$re_msg="{$re_msg0}{$re_msg}";
 
 
                 //
@@ -463,9 +423,11 @@ if($row!=false){
                                 continue;
                             }
                         }
-                        else
+                        elseif(array_key_exists("code",$data_user))
                         {
-                            continue;
+                            $re_msg.="<尚未收藏>\n";
+                        }else{
+                        	continue;
                         }
                     }
                     else
@@ -475,6 +437,51 @@ if($row!=false){
                 }
                 //
                 $num+=1;
+
+
+                //
+                $re_msg0="[List]<$i>:\n";
+                $re_msg.=$re_msg0;
+                if($cache_file){
+
+                    //test
+                    //\access\send_msg('send_private_msg',597320012,"test:true",constant('token'));
+
+                    //从文件中读取
+                    $re_msg.=$data['msg'];
+
+                }else{
+                    //https://api.bgm.tv/subject/109956
+                    $re_msg1=$data['images']['large']!=null&&$list_detail?"[CQ:image,file={$data['images']['large']}]":"";
+                    //$re_msg2="\n[List]<$i>: $subject_id";
+                    $re_msg3=$data['name_cn']!=""?"\n中文名:  {$data['name_cn']}":"";
+                    $re_msg4=$data['name']!=""?"\n原名:  {$data['name']}":"";
+                    $type2name_result=$type2name[$data['type']];
+                    $re_msg5=$data['type']!=""?"\n类型:  {$type2name_result}      ID: $subject_id":"\nID: $subject_id";
+                    $re_msg6=($data['air_date']=="0000-00-00"||$data['air_date']==null)?"":"\n放送日期:  {$data['air_date']}";
+
+                    if($data['air_weekday']==null){
+                        $re_msg7=null;
+                    }else{
+                        $int2weekday_result=$int2weekday[$data['air_weekday']];
+                        $re_msg7="\n放送星期:   $int2weekday_result";
+                    }
+                    
+                    $re_msg8=$data['url']!=""?"\nUrl:  {$data['url']}":"";
+
+                    $sub_re_msg="{$re_msg1}{$re_msg2}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}\n";
+                    $re_msg.=$sub_re_msg;
+                    //test
+                    //\access\send_msg('send_private_msg',597320012,"test:false",constant('token'));
+                    //array
+                    $data_array=array('msg'=>$sub_re_msg,'eps_count'=>$data['eps_count'],'rating'=>$data['rating'],'air_date'=>$data['air_date'],'name'=>$data['name'],'name_cn'=>$data['name_cn']);
+                    $serialize_data=serialize($data_array);
+                    //序列化
+                    file_put_contents(constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",$serialize_data);
+                }
+                //$re_msg="{$re_msg0}{$re_msg}";
+
+                //
                 //https://api.bgm.tv/subject/109956
                 // $re_msg.=($data['images']['large']!=null&&$list_detail?("[CQ:image,file=".$data['images']['large']."]"):"").
                 //     "\n[List]<$i>: ".$row["subject_".$i].
@@ -603,7 +610,7 @@ if($row!=false){
                         $user_subject_msg=$user_subject_submsg;
                     }
                     else{
-                        $user_subject_submsg="\n\n<未收藏>";
+                        $user_subject_submsg="\n<未收藏>";
                         $user_subject_msg=$user_subject_submsg;
                     }
                     $user_subject_msg.= "\n----------------\n";
