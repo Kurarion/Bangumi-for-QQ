@@ -16,15 +16,160 @@ $to=$_GET['to'];
 $from=$_GET['from'];
 //para
 $dmhy_moe=$_GET['dmhymoe']==1?true:false;
-$keyword=$_GET['keyword'];
+$keyword=str_replace('+',' ',$_GET['keyword']);
 $max_items=$_GET['max']!=null?$_GET['max']:8;
-//
+
+//init for para
+$subject_id=0;
+$ex_keyword='';
+$use_trans=false;
+//explode keyword
+if($keyword!=null&&$_GET['keyword'][0]!='.'){
+	$black_site=strpos($keyword, ' ');
+	if($black_site!=false){
+		$origin_subject_id=substr($keyword, 0, $black_site);
+		$ex_keyword=substr($keyword, $black_site);
+	}else{
+		$origin_subject_id=$keyword;
+	}
+	//test
+	//\access\send_msg($type,$to,"black_site: $black_site \norigin_subject_id: $origin_subject_id \nex_keyword: $ex_keyword",constant('token'));
+	// $ex_para=explode(' ', $keyword);
+	// $ex_size=count($ex_para);
+	// for($i=1;$i<$ex_size;++$i){
+	// 	$ex_keyword.=$ex_para[$i];
+	// }
+}
+//纯ID
+if(is_numeric($origin_subject_id)&&$_GET['keyword'][0]!='.'){
+	$subject_id=$origin_subject_id;
+	$use_trans=true;
+}
+//省略参数:考虑到二义性，如果省略第一个参数，并且没有+则第二个参数前置需加入.以区别
+elseif($keyword==null||$_GET['keyword'][0]=='.'||$_GET['keyword'][0]=='+'){
+	if($_GET['keyword'][0]=='.'){
+		//first para
+		$subject_id=\access\get_last_subject($type,$to,$from);
+		//second para
+		$max_items=substr($keyword, 1);		
+	}else{
+		//first para
+		$subject_id=\access\get_last_subject($type,$to,$from);
+		//ex keyword
+		$ex_keyword=$keyword;
+	}
+	$use_trans=true;
+}
+//表示进行特殊查询
+elseif($_GET['keyword'][0]=='#'){
+	//#本田 BIG XX字幕组
+	//#.本田 BIG XX字幕组
+	$subject_id=\access\read_save($type,$to,$from,substr($origin_subject_id,1));
+	$use_trans=true;
+}
+if($use_trans){
+	//get name of this subject
+	$subject_name='';
+	if($subject_id!=0){
+	    //请求bangumi api
+	    $urlx="https://api.bgm.tv/subject/$subject_id";
+	    //bangumi JSON
+	    $jsonx=file_get_contents($urlx);
+	    $datax=json_decode($jsonx,true);
+
+	    $copy_subject_name=$datax['name_cn']!=null?$datax['name_cn']:$datax['name'];
+	    //$copy_subject_name=$subject_name;
+
+	    $genn_name="|{$datax['name']}";
+	    $subject_last_name=str_replace(' ', '|', $genn_name);
+	    //
+	    //Anima Yell! 迷糊餐厅 第三季
+	    //mb_internal_encoding("UTF-8");
+	    $name_balce_site=strpos($copy_subject_name, ' ');
+	    if($name_balce_site==false){
+	    	//XXXX的XXXX
+	    	//$subject_name=substr_replace("的", '|', $subject_name);
+	    	// $subject_name=substr_replace($subject_name, '|', 2, 0);
+	    	// $subject_name=substr_replace($subject_name, '|', 5, 0);
+	    	// $subject_name=substr_replace($subject_name, '|', 7, 0);
+	    	$string_len=mb_strlen($copy_subject_name);
+	    	//$no_string_len=strlen($copy_subject_name);
+	    	//test
+	    	//\access\send_msg($type,$to,"string_len: $string_len \nname_balce_site: $name_balce_site \nno_string_len: $no_string_len",constant('token'));
+
+	    	$temp_name=array();
+	    	switch ($string_len) {
+	    		case 14:
+	    		case 13:
+	    		case 12:
+	    			//$subject_name=substr_replace($subject_name, '|', 10, 0);
+	    			$temp_name[3]='|'.mb_substr($copy_subject_name, 7,3);
+			    	//test
+	    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+	    		case 11:
+	    		case 10:
+	    		case 9:
+    				//$subject_name=substr_replace($subject_name, '|', 7, 0);
+	    			$temp_name[2]='|'.mb_substr($copy_subject_name, 5,2);
+			    	//test
+	    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+	    		case 8:
+	    		case 7:
+	    			//$subject_name=substr_replace($subject_name, '|', 5, 0);
+	    			$temp_name[1]='|'.mb_substr($copy_subject_name, 2,3);
+			    	//test
+	    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+	    		case 6:
+	    		case 5:
+	    		case 4:
+	    			//$subject_name=substr_replace($subject_name, '|', 2, 0);
+	    			$temp_name[0]=mb_substr($copy_subject_name, 0,2);
+			    	//test
+	    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+	    		case 3:
+	    		case 2:
+	    		case 1:
+	    			break;
+	    		
+	    		default:
+			    	// $subject_name=substr_replace($subject_name, '|', 10, 0);
+			    	// $subject_name=substr_replace($subject_name, '|', 7, 0);
+			    	// $subject_name=substr_replace($subject_name, '|', 5, 0);
+			    	// $subject_name=substr_replace($subject_name, '|', 2, 0);
+	    			$temp_name[3]='|'.mb_substr($copy_subject_name, 7,3);
+	    			$temp_name[2]='|'.mb_substr($copy_subject_name, 5,2);
+	    			$temp_name[1]='|'.mb_substr($copy_subject_name, 2,3);
+	    			$temp_name[0]=mb_substr($copy_subject_name, 0,2);
+	    			break;
+	    	}
+	    	for($i=0;$i<count($temp_name);++$i){
+	    		$subject_name.=$temp_name[$i];
+	    	}
+	    }else{
+	    	$subject_name=str_replace(' ', '|', $copy_subject_name);
+	    }
+	    $subject_name.=$subject_last_name;
+	    //
+	}else{
+		//不存在
+		\access\send_msg($type,$to,"我不认为你有用过相关背包位或没能搜到这样的条目...",constant('token'));
+		die();
+	}
+	$keyword="{$subject_name}{$ex_keyword}";
+	//test
+	//\access\send_msg($type,$to,"subject_id: $subject_id \nsubject_name: $subject_name \nex_keyword: $ex_keyword \nmax_items: $max_items",constant('token'));
+}
+
+
+//api
+$decode_keyword=urlencode($keyword);
+//msg
 $site=$dmhy_moe?'动漫花园':'萌番组';
 $msg="资源来源:[{$site}]\n关键字:[{$keyword}]\n";
 $fail_msg='没有相关结果...';
 $need_reply=true;
+
 //
-$decode_keyword=urlencode($keyword);
 if($dmhy_moe){
     //DMHY RSS
     $url="https://share.dmhy.org/topics/rss/rss.xml?keyword=$decode_keyword";
@@ -197,7 +342,7 @@ if($xml=simplexml_load_string($rss_file)){
 // }
 if($need_reply&&($itemNum-1)%constant("once_items_num")!=0){
     \access\send_msg($type,$to ,$msg,constant('token'));
-}elseif(($itemNum-1)%constant("once_items_num")!=0){
+}elseif($itemNum==1){
     //
     $msg.="\n$fail_msg";
     \access\send_msg($type,$to ,$msg,constant('token'));
