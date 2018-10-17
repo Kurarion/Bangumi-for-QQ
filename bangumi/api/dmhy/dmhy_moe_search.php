@@ -96,14 +96,20 @@ if($use_trans){
 	    	//$no_string_len=strlen($copy_subject_name);
 	    	//test
 	    	//\access\send_msg($type,$to,"string_len: $string_len \nname_balce_site: $name_balce_site \nno_string_len: $no_string_len",constant('token'));
-
+	    	$have_last_name=false;
+	    	$temp_last_name='';
 	    	$temp_name=array();
+	    	//first
 	    	switch ($string_len) {
 	    		case 14:
 	    		case 13:
 	    		case 12:
 	    			//$subject_name=substr_replace($subject_name, '|', 10, 0);
 	    			$temp_name[3]='|'.mb_substr($copy_subject_name, 7,3);
+	    			if(!$have_last_name){
+	    				$temp_last_name='|'.mb_substr($copy_subject_name, 10);
+	    				$have_last_name=true;
+	    			}
 			    	//test
 	    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
 	    		case 11:
@@ -111,12 +117,20 @@ if($use_trans){
 	    		case 9:
     				//$subject_name=substr_replace($subject_name, '|', 7, 0);
 	    			$temp_name[2]='|'.mb_substr($copy_subject_name, 5,2);
+	    			if(!$have_last_name){
+	    				$temp_last_name='|'.mb_substr($copy_subject_name, 7);
+	    				$have_last_name=true;
+	    			}
 			    	//test
 	    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
 	    		case 8:
 	    		case 7:
 	    			//$subject_name=substr_replace($subject_name, '|', 5, 0);
 	    			$temp_name[1]='|'.mb_substr($copy_subject_name, 2,3);
+	    			if(!$have_last_name){
+	    				$temp_last_name='|'.mb_substr($copy_subject_name, 5);
+	    				$have_last_name=true;
+	    			}
 			    	//test
 	    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
 	    		case 6:
@@ -124,6 +138,10 @@ if($use_trans){
 	    		case 4:
 	    			//$subject_name=substr_replace($subject_name, '|', 2, 0);
 	    			$temp_name[0]=mb_substr($copy_subject_name, 0,2);
+	    			if(!$have_last_name){
+	    				$temp_last_name='|'.mb_substr($copy_subject_name, 2);
+	    				$have_last_name=true;
+	    			}
 			    	//test
 	    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
 	    		case 3:
@@ -136,6 +154,7 @@ if($use_trans){
 			    	// $subject_name=substr_replace($subject_name, '|', 7, 0);
 			    	// $subject_name=substr_replace($subject_name, '|', 5, 0);
 			    	// $subject_name=substr_replace($subject_name, '|', 2, 0);
+	    			$temp_last_name='|'.mb_substr($copy_subject_name, 10);
 	    			$temp_name[3]='|'.mb_substr($copy_subject_name, 7,3);
 	    			$temp_name[2]='|'.mb_substr($copy_subject_name, 5,2);
 	    			$temp_name[1]='|'.mb_substr($copy_subject_name, 2,3);
@@ -145,6 +164,78 @@ if($use_trans){
 	    	for($i=0;$i<count($temp_name);++$i){
 	    		$subject_name.=$temp_name[$i];
 	    	}
+	    	$subject_name.=$temp_last_name;
+	    	//second
+	    	$have_last_name=false;
+	    	if($string_len>5){
+		    	switch ($string_len) {
+		    		case 14:
+		    		case 13:
+		    		case 12:
+		    			//$subject_name=substr_replace($subject_name, '|', 10, 0);
+		    			$temp_name[3]='|'.mb_substr($copy_subject_name, 8,2);
+		    			if(!$have_last_name){
+		    				$temp_last_name='|'.mb_substr($copy_subject_name, 10);
+		    				$have_last_name=true;
+		    			}
+				    	//test
+		    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+		    		case 11:
+		    		case 10:
+		    		case 9:
+	    				//$subject_name=substr_replace($subject_name, '|', 7, 0);
+		    			$temp_name[2]='|'.mb_substr($copy_subject_name, 5,3);
+		    			if(!$have_last_name){
+		    				$temp_last_name='|'.mb_substr($copy_subject_name, 8);
+		    				$have_last_name=true;
+		    			}
+				    	//test
+		    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+		    		case 8:
+		    		case 7:
+		    			//$subject_name=substr_replace($subject_name, '|', 5, 0);
+		    			$temp_name[1]='|'.mb_substr($copy_subject_name, 3,2);
+		    			if(!$have_last_name){
+		    				$temp_last_name='|'.mb_substr($copy_subject_name, 5);
+		    				$have_last_name=true;
+		    			}
+				    	//test
+		    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+		    		case 6:
+		    		case 5:
+		    		case 4:
+		    			//$subject_name=substr_replace($subject_name, '|', 2, 0);
+		    			$temp_name[0]='|'.mb_substr($copy_subject_name, 0,3);
+		    			if(!$have_last_name){
+		    				$temp_last_name='|'.mb_substr($copy_subject_name, 3);
+		    				$have_last_name=true;
+		    			}
+				    	//test
+		    			//\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+		    		case 3:
+		    		case 2:
+		    		case 1:
+		    			break;
+		    		
+		    		default:
+				    	// $subject_name=substr_replace($subject_name, '|', 10, 0);
+				    	// $subject_name=substr_replace($subject_name, '|', 7, 0);
+				    	// $subject_name=substr_replace($subject_name, '|', 5, 0);
+				    	// $subject_name=substr_replace($subject_name, '|', 2, 0);
+		    			$temp_last_name='|'.mb_substr($copy_subject_name, 10);
+		    			$temp_name[3]='|'.mb_substr($copy_subject_name, 8,2);
+		    			$temp_name[2]='|'.mb_substr($copy_subject_name, 5,3);
+		    			$temp_name[1]='|'.mb_substr($copy_subject_name, 3,2);
+		    			$temp_name[0]='|'.mb_substr($copy_subject_name, 0,3);
+		    			break;
+	    		}
+
+		    	for($i=0;$i<count($temp_name);++$i){
+		    		$subject_name.=$temp_name[$i];
+		    	}
+		    	$subject_name.=$temp_last_name;
+	    	}
+
 	    }else{
 	    	$subject_name=str_replace(' ', '|', $copy_subject_name);
 	    }
