@@ -6,7 +6,9 @@
 .img{
 	text-align: center;
 }
-img{
+img.detail{
+	width: 560px;
+	height: 800px;
 	padding: 2px;
 	border-radius: 8px;
 	box-shadow:  0 0 10px 6px rgba(0,0,0,.5);
@@ -24,6 +26,7 @@ img{
     display: inline-block;
     border-radius: 12px;
     font-size: 20px;
+    box-shadow:  0 0 10px 6px rgba(0,0,0,.5);
 }
 img.blur{
 	position: absolute;
@@ -32,4 +35,6 @@ img.blur{
 	filter: blur(5px);
 	z-index: -1;
 	width:100%;
+	border-radius: 2px;
+	box-shadow:  0 0 7px 4px rgba(0,0,0,.5);
 }

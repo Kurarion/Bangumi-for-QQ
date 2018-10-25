@@ -89,7 +89,7 @@ $html_contents=<<<EOF
 		
 		<br>
 		<div class="img">
-			<img src="$subject_img">
+			<img class="detail" src="$subject_img">
 		</div>
 		<br>
 		<div class="button_div">
