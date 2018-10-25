@@ -145,8 +145,13 @@ if($row!=false){
             }
             
             $re_msg8=$data['url']!=""?"\nUrl:  {$data['url']}":"";
+            //dmhy
+            $dmhy_keyword=\access\get_dmhy_name($data['name_cn'],$data['name']);
+            $php_subject_name=$data['name_cn']!=null?$data['name_cn']:$data['name'];
+            $dmhy_url=\access\gen_dmhy_php($to,$from,$dmhy_keyword,$subject_id,$php_subject_name,$data['images']['large']);
+            $re_msg9="\n# DMHY:  {$dmhy_url} #";
 
-            $re_msg="{$re_msg1}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}";
+            $re_msg="{$re_msg1}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}{$re_msg9}";
 
             //test
             //\access\send_msg('send_private_msg',597320012,"test:false",constant('token'));
@@ -156,6 +161,12 @@ if($row!=false){
             //序列化
             file_put_contents(constant('cache_file_path')."{$subject_id}_{$file_last_name}.data",$serialize_data);
         }
+        //if its not for private then delete the DMHY_url
+        if($_GET['type']!='private'){
+	       $re_msg=preg_replace('/\s#.*#/','',$re_msg);	
+        }
+ 
+
         $re_msg="{$re_msg0}{$re_msg}";
         //此处添加用户对条目的信息
         //$user_access_token=\access\get_access_token($type,$to,$from);
@@ -448,7 +459,11 @@ if($row!=false){
                     //\access\send_msg('send_private_msg',597320012,"test:true",constant('token'));
 
                     //从文件中读取
-                    $re_msg.=$data['msg'];
+                    if($_GET['type']=='private'){
+                        $re_msg.=$data['msg'];
+                    }else{
+                        $re_msg.=preg_replace('/\s#.*#/','',$data['msg']);
+                    }
 
                 }else{
                     //https://api.bgm.tv/subject/109956
@@ -468,9 +483,18 @@ if($row!=false){
                     }
                     
                     $re_msg8=$data['url']!=""?"\nUrl:  {$data['url']}":"";
+                    //dmhy
+		            $dmhy_keyword=\access\get_dmhy_name($data['name_cn'],$data['name']);
+                    $php_subject_name=$data['name_cn']!=null?$data['name_cn']:$data['name'];
+                    $dmhy_url=\access\gen_dmhy_php($to,$from,$dmhy_keyword,$subject_id,$php_subject_name,$data['images']['large']);
+		            $re_msg9="\n# DMHY:  http://{$dmhy_url} #";
 
-                    $sub_re_msg="{$re_msg1}{$re_msg2}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}\n";
-                    $re_msg.=$sub_re_msg;
+                    $sub_re_msg="{$re_msg1}{$re_msg2}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}{$re_msg9}\n";
+                    if($_GET['type']=='private'){
+                        $re_msg.=$sub_re_msg;
+                    }else{
+                        $re_msg.=preg_replace('/\s#.*#/','',$sub_re_msg);
+                    }   
                     //test
                     //\access\send_msg('send_private_msg',597320012,"test:false",constant('token'));
                     //array

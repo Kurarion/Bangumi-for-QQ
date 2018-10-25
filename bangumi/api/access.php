@@ -546,6 +546,209 @@ namespace access{
 
 
     }
+        //get subject name for dmhy
+    function get_dmhy_name($name_cn,$name){
+        $subject_name='';
+        $copy_subject_name=$name_cn!=null?$name_cn:$name;
+        //$copy_subject_name=$subject_name;
+
+        $genn_name=$name;
+        $subject_last_name=str_replace(' ', '|', $genn_name);
+        //
+        //Anima Yell! 迷糊餐厅 第三季
+        //mb_internal_encoding("UTF-8");
+        $name_balce_site=strpos($copy_subject_name, ' ');
+        if($name_balce_site==false){
+            //XXXX的XXXX
+            //$subject_name=substr_replace("的", '|', $subject_name);
+            // $subject_name=substr_replace($subject_name, '|', 2, 0);
+            // $subject_name=substr_replace($subject_name, '|', 5, 0);
+            // $subject_name=substr_replace($subject_name, '|', 7, 0);
+            $string_len=mb_strlen($copy_subject_name);
+            //$no_string_len=strlen($copy_subject_name);
+            //test
+            //\access\send_msg($type,$to,"string_len: $string_len \nname_balce_site: $name_balce_site \nno_string_len: $no_string_len",constant('token'));
+            $have_last_name=false;
+            $temp_last_name='';
+            $temp_name=array();
+            //first
+            switch ($string_len) {
+                case 14:
+                case 13:
+                case 12:
+                    //$subject_name=substr_replace($subject_name, '|', 10, 0);
+                    $temp_name[3]='|'.mb_substr($copy_subject_name, 7,3);
+                    if(!$have_last_name){
+                        $temp_last_name='|'.mb_substr($copy_subject_name, 10);
+                        $have_last_name=true;
+                    }
+                    //test
+                    //\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+                case 11:
+                case 10:
+                case 9:
+                    //$subject_name=substr_replace($subject_name, '|', 7, 0);
+                    $temp_name[2]='|'.mb_substr($copy_subject_name, 5,2);
+                    if(!$have_last_name){
+                        $temp_last_name='|'.mb_substr($copy_subject_name, 7);
+                        $have_last_name=true;
+                    }
+                    //test
+                    //\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+                case 8:
+                case 7:
+                    //$subject_name=substr_replace($subject_name, '|', 5, 0);
+                    $temp_name[1]='|'.mb_substr($copy_subject_name, 2,3);
+                    if(!$have_last_name){
+                        $temp_last_name='|'.mb_substr($copy_subject_name, 5);
+                        $have_last_name=true;
+                    }
+                    //test
+                    //\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+                case 6:
+                case 5:
+                case 4:
+                    //$subject_name=substr_replace($subject_name, '|', 2, 0);
+                    $temp_name[0]=mb_substr($copy_subject_name, 0,2);
+                    if(!$have_last_name){
+                        $temp_last_name='|'.mb_substr($copy_subject_name, 2);
+                        $have_last_name=true;
+                    }
+                    //test
+                    //\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+                case 3:
+                case 2:
+                case 1:
+                    break;
+                
+                default:
+                    // $subject_name=substr_replace($subject_name, '|', 10, 0);
+                    // $subject_name=substr_replace($subject_name, '|', 7, 0);
+                    // $subject_name=substr_replace($subject_name, '|', 5, 0);
+                    // $subject_name=substr_replace($subject_name, '|', 2, 0);
+                    $temp_last_name='|'.mb_substr($copy_subject_name, 10);
+                    $temp_name[3]='|'.mb_substr($copy_subject_name, 7,3);
+                    $temp_name[2]='|'.mb_substr($copy_subject_name, 5,2);
+                    $temp_name[1]='|'.mb_substr($copy_subject_name, 2,3);
+                    $temp_name[0]=mb_substr($copy_subject_name, 0,2);
+                    break;
+            }
+            for($i=0;$i<count($temp_name);++$i){
+                $subject_name.=$temp_name[$i];
+            }
+            $subject_name.=$temp_last_name;
+            //second
+            $have_last_name=false;
+            if($string_len>5){
+                switch ($string_len) {
+                    case 14:
+                    case 13:
+                    case 12:
+                        //$subject_name=substr_replace($subject_name, '|', 10, 0);
+                        $temp_name[3]='|'.mb_substr($copy_subject_name, 8,2);
+                        if(!$have_last_name){
+                            $temp_last_name='|'.mb_substr($copy_subject_name, 10);
+                            $have_last_name=true;
+                        }
+                        //test
+                        //\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+                    case 11:
+                    case 10:
+                    case 9:
+                        //$subject_name=substr_replace($subject_name, '|', 7, 0);
+                        $temp_name[2]='|'.mb_substr($copy_subject_name, 5,3);
+                        if(!$have_last_name){
+                            $temp_last_name='|'.mb_substr($copy_subject_name, 8);
+                            $have_last_name=true;
+                        }
+                        //test
+                        //\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+                    case 8:
+                    case 7:
+                        //$subject_name=substr_replace($subject_name, '|', 5, 0);
+                        $temp_name[1]='|'.mb_substr($copy_subject_name, 3,2);
+                        if(!$have_last_name){
+                            $temp_last_name='|'.mb_substr($copy_subject_name, 5);
+                            $have_last_name=true;
+                        }
+                        //test
+                        //\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+                    case 6:
+                    case 5:
+                    case 4:
+                        //$subject_name=substr_replace($subject_name, '|', 2, 0);
+                        $temp_name[0]='|'.mb_substr($copy_subject_name, 0,3);
+                        if(!$have_last_name){
+                            $temp_last_name='|'.mb_substr($copy_subject_name, 3);
+                            $have_last_name=true;
+                        }
+                        //test
+                        //\access\send_msg($type,$to,"temp_name: $temp_name",constant('token'));
+                    case 3:
+                    case 2:
+                    case 1:
+                        break;
+                    
+                    default:
+                        // $subject_name=substr_replace($subject_name, '|', 10, 0);
+                        // $subject_name=substr_replace($subject_name, '|', 7, 0);
+                        // $subject_name=substr_replace($subject_name, '|', 5, 0);
+                        // $subject_name=substr_replace($subject_name, '|', 2, 0);
+                        $temp_last_name='|'.mb_substr($copy_subject_name, 10);
+                        $temp_name[3]='|'.mb_substr($copy_subject_name, 8,2);
+                        $temp_name[2]='|'.mb_substr($copy_subject_name, 5,3);
+                        $temp_name[1]='|'.mb_substr($copy_subject_name, 3,2);
+                        $temp_name[0]='|'.mb_substr($copy_subject_name, 0,3);
+                        break;
+                }
+
+                for($i=0;$i<count($temp_name);++$i){
+                    $subject_name.=$temp_name[$i];
+                }
+                $subject_name.=$temp_last_name;
+            }
+
+        }else{
+            $subject_name=str_replace(' ', '|', $copy_subject_name);
+        }
+        $subject_name.=$subject_last_name;
+
+        return $subject_name;
+    }
+    //generate php for user to get reply of dmhy
+    function gen_dmhy_php($to,$from,$keyword,$subject_id,$subject_name='',$subject_img=''){
+        //$keyword=;
+        //$to=;
+        //$from=;
+        $access=constant('password');
+        //return url
+        //$subject_id=;
+        $php_path="../../../bgm/{$from}/";
+        if(!is_dir($php_path)){
+            mkdir($php_path, 0777);
+        }
+        $php_path.="{$subject_id}/";
+        if(!is_dir($php_path)){
+            mkdir($php_path, 0777);
+        }
+        $php_name="{$php_path}index.php";
+        $url="http://bgm.irisu.cc/bgm/{$from}/{$subject_id}";
+        //if there already has
+
+        //access url
+        $wget_url="http://127.0.0.1/bangumi/api/dmhy/dmhy_moe_search.php?dmhymoe=1&keyword={$keyword}&max=5&type=private&to={$to}&from={$from}&access={$access}";
+        $dmhy_url="https://share.dmhy.org/topics/list?keyword={$keyword}";
+        $php_file=file_get_contents('./dmhy_moe_php.dat');
+        //modify the php contents
+        $php_file=str_replace("{dmhy_url}",$dmhy_url,$php_file);
+        $php_file=str_replace("{reply_url}",$wget_url,$php_file);
+        $php_file=str_replace("{subject_name}",$subject_name,$php_file);
+        $php_file=str_replace("{subject_img}",$subject_img,$php_file);
+
+        file_put_contents($php_name, $php_file);
+        return $url;
+
+    }
 }
 
 
