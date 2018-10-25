@@ -553,7 +553,7 @@ namespace access{
         //$copy_subject_name=$subject_name;
 
         $genn_name=$name;
-        $subject_last_name=str_replace(' ', '|', $genn_name);
+        $subject_last_name='|'.str_replace(' ', '|', $genn_name);
         //
         //Anima Yell! 迷糊餐厅 第三季
         //mb_internal_encoding("UTF-8");
