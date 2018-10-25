@@ -487,7 +487,7 @@ if($row!=false){
 		            $dmhy_keyword=\access\get_dmhy_name($data['name_cn'],$data['name']);
                     $php_subject_name=$data['name_cn']!=null?$data['name_cn']:$data['name'];
                     $dmhy_url=\access\gen_dmhy_php($to,$from,$dmhy_keyword,$subject_id,$php_subject_name,$data['images']['large']);
-		            $re_msg9="\n# DMHY:  http://{$dmhy_url} #";
+		            $re_msg9="\n# DMHY:  {$dmhy_url} #";
 
                     $sub_re_msg="{$re_msg1}{$re_msg2}{$re_msg3}{$re_msg4}{$re_msg5}{$re_msg6}{$re_msg7}{$re_msg8}{$re_msg9}\n";
                     if($_GET['type']=='private'){
