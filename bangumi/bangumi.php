@@ -235,6 +235,16 @@ switch ($low_msg[1]){
 
         $dead=true;
         break;
+    case 'w':
+    	$web_path="../bgm/{$from}/index.html";
+    	if(file_exists($web_path)){
+    		$web="http://bgm.irisu.cc/bgm/{$from}/";
+    	}else{
+    		$web="http://bgm.irisu.cc/bgm/";
+    	}
+		$re_msg[0]['data']['text']='WEB: '.$web;
+        $dead=true;
+        break;
     case 'd':
         if(1==strpos($low_msg,"dmhy")){
             $php.="/dmhy/dmhy_moe_search.php?";
