@@ -1,0 +1,21 @@
+<div class="fix"  onmouseover="change_background('{subject_img}')" onmouseout="change_background('null')">
+
+	<p class="process" style=" background-color: #FFFFFF">标记<span style="color:#080808;">{have_collect_num}</span></p>
+	<p class="process" style=" background-color: #FF9999">放送<span style="color:#000F91;">{have_air_num}</span></p>
+	<p class="process" style=" background-color: #888888">总话<span style="color:#FEFEFE;">{all_num}</span></p>
+
+	<div class="img">
+		<img class="detail" onclick="to_detail_subject('{subject_id}')" src="{subject_img}">
+	</div>
+	
+	<div class="button_div">
+		<button class="button" onclick="to_detail_subject_bgm('{subject_id}')">Bangumi</button>
+		&nbsp;
+		&nbsp;
+		&nbsp;
+		&nbsp;
+		&nbsp;
+		<button class="button" onclick="to_dmhy('{dmhy_url}')">动漫花园</button>
+	</div>	
+
+</div>

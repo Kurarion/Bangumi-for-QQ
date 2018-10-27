@@ -736,12 +736,15 @@ namespace access{
         //if there already has
 
         //access url
-        $wget_url="http://127.0.0.1/bangumi/api/dmhy/dmhy_moe_search.php?dmhymoe=1&keyword={$keyword}&max=5&type=private&to={$to}&from={$from}&access={$access}";
+        //$wget_url="http://127.0.0.1/bangumi/api/dmhy/dmhy_moe_search.php?dmhymoe=1&keyword={$keyword}&max=5&type=private&to={$to}&from={$from}&access={$access}";
         $dmhy_url="https://share.dmhy.org/topics/list?keyword={$keyword}";
+        $bangumi_id=\access\get_bangumi_id($type,$to,$from);
         $php_file=file_get_contents('./dmhy_moe_php.dat');
         //modify the php contents
         $php_file=str_replace("{dmhy_url}",$dmhy_url,$php_file);
-        $php_file=str_replace("{reply_url}",$wget_url,$php_file);
+        $php_file=str_replace("{qq}",$to,$php_file);
+        $php_file=str_replace("{bangumi_id}",$bangumi_id,$php_file);
+        $php_file=str_replace("{subject_id}",$subject_id,$php_file);
         $php_file=str_replace("{subject_name}",$subject_name,$php_file);
         $php_file=str_replace("{subject_img}",$subject_img,$php_file);
 
@@ -749,6 +752,20 @@ namespace access{
         return $url;
 
     }
+    //Return Bangumi ID
+    function get_bangumi_id($from){
+        $get_last_subject_sql="select user_bangumi
+                              from bgm_users
+                              where user_qq=$from";
+        $result=\access\sql_query('send_private_msg',$from,$get_last_subject_sql);
+        $row=mysqli_fetch_array($result,MYSQLI_NUM);
+        //如果之前没有记录（默认为0）或者没有注册即没有这个记录 返回false
+        if($row==0||$row==false){
+            return false;
+        }
+        return $row[0];
+    }
+
 }
 
 
