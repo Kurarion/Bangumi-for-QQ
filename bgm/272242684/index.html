@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../dmhy_moe_home.css" charset="utf-8">
+    <script type="text/javascript">
+	function send_msg(){
+	    if( navigator.userAgent.match(/Android/i)
+	    || navigator.userAgent.match(/webOS/i)
+	    || navigator.userAgent.match(/iPhone/i)
+	    || navigator.userAgent.match(/iPad/i)
+	    || navigator.userAgent.match(/iPod/i)
+	    || navigator.userAgent.match(/BlackBerry/i)
+	    || navigator.userAgent.match(/Windows Phone/i)
+	    ){
+	    		window.location.href="mqqwpa://im/chat?chat_type=wpa&uin=1243000303&version=1&src_type=web&web_src=irisu.cc";
+	    }
+	    else {
+
+	    		window.location.href="tencent://message/?uin=1243000303&Site=irisu.cc&Menu=yes";
+	    }
+	}
+	function to_bangumi(){
+		window.location.href='http://bgm.tv/';
+	}
+	function to_timeline(){
+		window.location.href='http://bgm.tv/'+'user/'+'275361';
+	}
+	function to_dmhy(dmhy_url){
+		window.location.href=dmhy_url;
+	}
+	function to_detail_subject(subject_id){
+		window.location.href='http://bgm.irisu.cc/bgm/'+'272242684/'+subject_id;
+	}
+	function to_detail_subject_bgm(subject_id){
+		window.location.href='http://bgm.tv/'+"subject/"+subject_id;
+	}
+	function update_save(){
+		//update
+		window.location.href='http://bgm.irisu.cc/bgm/'+'gen_index.php?qq='+'272242684';
+	}
+	function change_background(xxxx){
+		var Back=document.getElementById("BackGround");
+		if(xxxx!='null'){
+			Back.src = xxxx;
+			Back.className = 'blur_solid';
+		}
+		else{
+			Back.className = 'blur_transparent';
+		}
+	}		
+
+	</script>
+</head>
+
+<body>
+
+	
+	<ul class="nav">
+		<li><button onclick="to_bangumi()">Bangumi番组计划</button></li>
+		<li><button onclick="send_msg()">Bangumi娘</button></li>
+		<li><button onclick="to_timeline()">时光机</button></li>
+		<li><button onclick="update_save()">更新</button></li>
+	</ul>
+	<div class="outer" id = "body">		<img class="blur" id="BackBackGround" onclick="return false" src='http://www.irisu.cc/res/bgm_pic.jpg'>
+		<img class="blur_transparent" id="BackGround" onclick="return false" src='http://www.irisu.cc/res/bgm_pic.jpg'>
+	
+	</div>
+	<script type="text/javascript">
+   		//动态背景
+		background1 = document.getElementById("BackGround");
+		background2 = document.getElementById("BackBackGround");
+		var body = document.getElementById("body");
+		body.onmousemove=function(ev){
+			ev=ev||window.event;
+	 		var iX1=ev.clientX-(background1.offsetLeft+this.offsetWidth/2);
+	 		var iY1=ev.clientY-(background1.offsetTop+this.offsetHeight/2);
+	 		var xoff=-5*iX1/this.offsetWidth;
+	 		var yoff=-5*iY1/this.offsetHeight;
+	 		background1.style.left=-10+xoff+'%';
+	 		background1.style.top=-10+yoff+'%';
+	 		background2.style.left=-10+xoff+'%';
+	 		background2.style.top=-10+yoff+'%';
+		}
+
+
+	</script>
+
+</body>
+</html>
