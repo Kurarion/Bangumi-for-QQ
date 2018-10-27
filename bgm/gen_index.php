@@ -48,7 +48,8 @@ $html_top=<<<EOF
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>$subject_name</title>
+    <title>背包指南</title>
+    <link rel="icon" type="image/x-icon" href="http://irisu.cc/res/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="../dmhy_moe_home.css" charset="utf-8">
     <script type="text/javascript">
 	function send_msg(){

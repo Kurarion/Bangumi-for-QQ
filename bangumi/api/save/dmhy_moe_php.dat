@@ -42,6 +42,7 @@ $html_contents=<<<EOF
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>$subject_name</title>
+    <link rel="icon" type="image/x-icon" href="http://irisu.cc/res/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="../../dmhy_moe.css" charset="utf-8">
     <script type="text/javascript">
 	function send_msg(){
