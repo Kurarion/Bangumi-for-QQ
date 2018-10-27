@@ -45,6 +45,16 @@ namespace web{
                 $this_div_data=str_replace('{subject_id}',$row["subject_{$i}"],$this_div_data);
                 $this_div_data=str_replace('{subject_img}',$data['images']['large'],$this_div_data);
                 $keyword=\access\get_dmhy_name($data['name_cn'],$data['name']);
+
+                $detail_path="./{$from}/{$row["subject_{$i}"]}/index.php";
+                if(!file_exists($detail_path)){
+                    //gen detail page
+                    $bgm_path="./{$from}/";
+                    $dat_file_path='../bangumi/api/save/';
+                    \access\gen_dmhy_php($from,$from,$keyword,$row["subject_{$i}"],$true_subject_name,$data['images']['large'],$bgm_path,$dat_file_path);
+                }
+                
+
                 $dmhy_url="https://share.dmhy.org/topics/list?keyword={$keyword}";
                 $this_div_data=str_replace('{dmhy_url}',$dmhy_url,$this_div_data);
 				//token

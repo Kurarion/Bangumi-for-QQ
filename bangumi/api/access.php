@@ -716,14 +716,21 @@ namespace access{
         return $subject_name;
     }
     //generate php for user to get reply of dmhy
-    function gen_dmhy_php($to,$from,$keyword,$subject_id,$subject_name='',$subject_img=''){
+    function gen_dmhy_php($to,$from,$keyword,$subject_id,$subject_name='',$subject_img='',$bgm_path='',$file_dat_path=''){
         //$keyword=;
         //$to=;
         //$from=;
         $access=constant('password');
         //return url
         //$subject_id=;
-        $php_path="../../../bgm/{$from}/";
+        if($bgm_path==''){
+            $php_path="../../../bgm/{$from}/";
+            $dat_file_path='./';       
+        }else{
+            $php_path=$bgm_path;
+            $dat_file_path=$file_dat_path;
+        }
+        $dat_file_path.='dmhy_moe_php.dat';
         if(!is_dir($php_path)){
             mkdir($php_path, 0777);
         }
@@ -738,11 +745,11 @@ namespace access{
         //access url
         //$wget_url="http://127.0.0.1/bangumi/api/dmhy/dmhy_moe_search.php?dmhymoe=1&keyword={$keyword}&max=5&type=private&to={$to}&from={$from}&access={$access}";
         $dmhy_url="https://share.dmhy.org/topics/list?keyword={$keyword}";
-        $bangumi_id=\access\get_bangumi_id($type,$to,$from);
-        $php_file=file_get_contents('./dmhy_moe_php.dat');
+        $bangumi_id=\access\get_bangumi_id($from);
+        $php_file=file_get_contents($dat_file_path);
         //modify the php contents
         $php_file=str_replace("{dmhy_url}",$dmhy_url,$php_file);
-        $php_file=str_replace("{qq}",$to,$php_file);
+        $php_file=str_replace("{qq}",$from,$php_file);
         $php_file=str_replace("{bangumi_id}",$bangumi_id,$php_file);
         $php_file=str_replace("{subject_id}",$subject_id,$php_file);
         $php_file=str_replace("{subject_name}",$subject_name,$php_file);
