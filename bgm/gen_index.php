@@ -24,7 +24,7 @@ $old_url='http://www.irisu.cc/res/bgm_pic.jpg';
 //file_get_contents($reply_url);
 $bgm_tv='http://bgm.tv/';
 $my_bgm='http://bgm.irisu.cc/bgm/';
-
+$bgm_loading='http://www.irisu.cc/res/bgm_loading.gif';
 //user
 //$bangumi_id='{bangumi_id}';
 //$qq='{qq}';
@@ -85,6 +85,7 @@ $html_top=<<<EOF
 	}
 	function update_save(){
 		//update
+		now_loading();
 		window.location.href='$my_bgm'+'gen_index.php?qq='+'$qq';
 	}
 	function change_background(xxxx){
@@ -96,7 +97,15 @@ $html_top=<<<EOF
 		else{
 			Back.className = 'blur_transparent';
 		}
-	}		
+	}	
+	function now_loading(){
+		var loading_img=document.getElementById("loading_img");
+		loading_img.className = 'loading_after';
+		var loading_div=document.getElementById("loading_div");
+		loading_div.style.zIndex=1;
+		loading_div.style.opacity=0.95;
+		loading_div.style.backgroundColor='#555555'; 
+	}			
 
 	</script>
 </head>
@@ -109,6 +118,9 @@ $html_top=<<<EOF
 		<li><button onclick="send_msg()">Bangumi娘</button></li>
 		<li><button onclick="to_timeline()">时光机</button></li>
 		<li><button onclick="update_save()">更新</button></li>
+		<div class="loading" id="loading_div">
+			<img class="loading_before" id="loading_img" src="$bgm_loading">
+		</div>
 	</ul>
 	<div class="outer" id = "body">
 EOF;

@@ -236,9 +236,9 @@ switch ($low_msg[1]){
         $dead=true;
         break;
     case 'w':
-    	$web_path="../bgm/{$from}/index.html";
+    	$web_path="../bgm/{$sub_from}/index.html";
     	if(file_exists($web_path)){
-    		$web="http://bgm.irisu.cc/bgm/{$from}/";
+    		$web="http://bgm.irisu.cc/bgm/{$sub_from}/";
     	}else{
     		$web="http://bgm.irisu.cc/bgm/";
     	}

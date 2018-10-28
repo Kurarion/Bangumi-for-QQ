@@ -73,6 +73,9 @@ namespace web{
                             else{
                                 $aired_subject_eps=1+intval($day/7.0);
                             }
+                            if($aired_subject_eps>9999){
+                                $aired_subject_eps=9999;
+                            }
                         }
                         else
                         {
@@ -98,7 +101,7 @@ namespace web{
                                 $all_num.='▧';
                             }
                         }else{
-                            $all_num="[????]";
+                            $all_num="[0000]";
                             $all_num.='???';
                         }
 

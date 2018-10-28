@@ -24,6 +24,46 @@
 .nav button:hover,input:hover{
 	background-color: #F08080;
 }
+.nav .loading{	
+	border-radius: 4px;
+    box-shadow:  0 0 10px 6px rgba(0,0,0,.5);
+	text-align: center;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	z-index: -1;
+	opacity:0;
+    transition: opacity 1.1s;
+	-moz-transition: opacity 1.1s;	/* Firefox 4 */
+	-webkit-transition: opacity 1.1s;	/* Safari 和 Chrome */
+	-o-transition: opacity 1.1s;	/* Opera */
+}
+.nav .loading .loading_before{
+	width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0;
+    transform: translate(-50%,-50%);
+    transition: opacity 1.5s;
+	-moz-transition: opacity 1.5s;	/* Firefox 4 */
+	-webkit-transition: opacity 1.5s;	/* Safari 和 Chrome */
+	-o-transition: opacity 1.5s;	/* Opera */
+}
+.nav .loading .loading_after{
+	width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0.8;
+    transform: translate(-50%,-50%);
+    transition: opacity 1.5s;
+	-moz-transition: opacity 1.5s;	/* Firefox 4 */
+	-webkit-transition: opacity 1.5s;	/* Safari 和 Chrome */
+	-o-transition: opacity 1.5s;	/* Opera */
+}
 .outer{
 	float: right;
 	width: 94%;
@@ -116,7 +156,7 @@ img.blur{
 
 	filter: blur(4px);
 
-	z-index: -1;
+	z-index: -2;
 	width:120%;
 	height: auto;
 	border-radius: 2px;
@@ -130,7 +170,7 @@ img.blur_solid{
 
 	filter: blur(4px);
 	opacity: 1;
-	z-index: -1;
+	z-index: -2;
 	width:120%;
 	height: auto;
 	border-radius: 2px;
@@ -145,7 +185,7 @@ img.blur_transparent{
 
 	filter: blur(4px);
 	opacity: 0;
-	z-index: -1;
+	z-index: -2;
 	width:120%;
 	height: auto;
 	border-radius: 2px;
