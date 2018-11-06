@@ -4,7 +4,7 @@
 	margin:0;
 	padding:0;
 }
-.nav button,input{
+.nav .switch_off,button,input{
 	background-color: #555555; 
     border: none;
     color: white;
@@ -23,6 +23,23 @@
 }
 .nav button:hover,input:hover{
 	background-color: #F08080;
+}
+.nav .switch_on{
+	background-color: #F08080;
+	border: none;
+    color: white;
+    margin-top: 2px;
+    padding: 7px 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 4px;
+    font-size: 6px;
+    box-shadow:  0 0 4px 3px rgba(0,0,0,.5);
+    transform: background-color 0.5s;
+	-moz-transition: background-color 0.5s;	/* Firefox 4 */
+	-webkit-transition: background-color 0.5s;	/* Safari 和 Chrome */
+	-o-transition: background-color 0.5s;	/* Opera */
 }
 .nav .loading{	
 	border-radius: 4px;
@@ -111,7 +128,7 @@ img.detail{
 }
 .process{
 	margin: 2px 0px 2px 3px;
-	font-size: 18px;
+	font-size: 17px;
 	color: black;
 	text-align: left;
 	background-color: #F08080;
@@ -134,7 +151,7 @@ img.detail{
     background-color: #555555; 
     border: none;
     color: white;
-    padding: 12px 28px;
+    padding: 11px 21px;
     text-align: center;
     text-decoration: none;
     display: inline-block;

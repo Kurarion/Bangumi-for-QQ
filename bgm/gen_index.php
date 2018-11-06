@@ -105,7 +105,34 @@ $html_top=<<<EOF
 		loading_div.style.zIndex=1;
 		loading_div.style.opacity=0.95;
 		loading_div.style.backgroundColor='#555555'; 
-	}			
+	}	
+	function switch_dyn_background(){
+		var body = document.getElementById("body");
+		var back_switch = document.getElementById("back_switch");
+		var on_or_off = back_switch.className=='switch_off';
+		var background1 = document.getElementById("BackGround");
+		var background2 = document.getElementById("BackBackGround");
+		if(on_or_off){
+			back_switch.className='switch_on';
+	   		//动态背景
+
+			body.onmousemove=function(ev){
+				ev=ev||window.event;
+		 		var iX1=ev.clientX-(background1.offsetLeft+this.offsetWidth/2);
+		 		var iY1=ev.clientY-(background1.offsetTop+this.offsetHeight/2);
+		 		var xoff=-5*iX1/this.offsetWidth;
+		 		var yoff=-5*iY1/this.offsetHeight;
+		 		background1.style.left=-10+xoff+'%';
+		 		background1.style.top=-10+yoff+'%';
+		 		background2.style.left=-10+xoff+'%';
+		 		background2.style.top=-10+yoff+'%';
+			}
+		}else{
+			body.onmousemove = null;
+			back_switch.className='switch_off';
+		}
+		
+	}		
 
 	</script>
 </head>
@@ -118,6 +145,7 @@ $html_top=<<<EOF
 		<li><button onclick="send_msg()">Bangumi娘</button></li>
 		<li><button onclick="to_timeline()">时光机</button></li>
 		<li><button onclick="update_save()">更新</button></li>
+		<li><button class="switch_off" id="back_switch" onclick="switch_dyn_background()">动态背景</button></li>
 		<div class="loading" id="loading_div">
 			<img class="loading_before" id="loading_img" src="$bgm_loading">
 		</div>
@@ -156,26 +184,6 @@ $html_buttom=<<<EOF
 		<img class="blur_transparent" id="BackGround" onclick="return false" src='$old_url'>
 	
 	</div>
-	<script type="text/javascript">
-   		//动态背景
-		background1 = document.getElementById("BackGround");
-		background2 = document.getElementById("BackBackGround");
-		var body = document.getElementById("body");
-		body.onmousemove=function(ev){
-			ev=ev||window.event;
-	 		var iX1=ev.clientX-(background1.offsetLeft+this.offsetWidth/2);
-	 		var iY1=ev.clientY-(background1.offsetTop+this.offsetHeight/2);
-	 		var xoff=-5*iX1/this.offsetWidth;
-	 		var yoff=-5*iY1/this.offsetHeight;
-	 		background1.style.left=-10+xoff+'%';
-	 		background1.style.top=-10+yoff+'%';
-	 		background2.style.left=-10+xoff+'%';
-	 		background2.style.top=-10+yoff+'%';
-		}
-
-
-	</script>
-
 </body>
 </html>
 
