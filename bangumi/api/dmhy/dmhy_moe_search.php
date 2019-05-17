@@ -16,6 +16,7 @@ $to=$_GET['to'];
 $from=$_GET['from'];
 //para
 $dmhy_moe=$_GET['dmhymoe']==1?true:false;
+$dmhy_nyaa=$_GET['dmhynyaa']==1?true:false;
 $keyword=str_replace('+',' ',$_GET['keyword']);
 $max_items=$_GET['max']!=null?$_GET['max']:5;
 
@@ -102,9 +103,11 @@ $need_reply=true;
 if($dmhy_moe){
     //DMHY RSS
     $url="https://share.dmhy.org/topics/rss/rss.xml?keyword=$decode_keyword";
-}else{
+}elseif(!$dmhy_nyaa){
     //Moe RSS
     $url="https://bangumi.moe/rss/search/$decode_keyword";
+}elseif($dmhy_nyaa){
+    $url="https://nyaa.si/?page=rss&q=$decode_keyword&c=0_0&f=0";
 }
 //test
 //\access\send_msg($type,$from,$url,constant("token"));
@@ -168,7 +171,14 @@ if($xml=simplexml_load_string($rss_file)){
                         $currentItemMsg.="\n$item";
                         break;
                     case "link":
-                        $currentItemMsg.="\nURL:\n$item";
+                        if (!$dmhy_nyaa) {
+                            $currentItemMsg.="\nURL:\n$item";
+                        }else{
+                            $TorrentEncode_result=\dmhy\TorrentEncode($item->attributes());
+                            $currentItemMsg.="\n种子链接:\n$TorrentEncode_result";
+                            if($itemNum<=$max_items){
+                                $torrent_list.="\n$TorrentEncode_result";}
+                        }
                         break;
                     case "pubDate":
                         //第一个item最新
@@ -209,12 +219,12 @@ if($xml=simplexml_load_string($rss_file)){
                             $currentItemMsg.="\n磁力链接:\n$magnet[0]";
                             if($itemNum<=$max_items){
                             $torrent_list.="\n$magnet[0]";}
-                        }else{
+                        }elseif(!$dmhy_nyaa){
                             //moe
                             $TorrentEncode_result=\dmhy\TorrentEncode($item->attributes());
                             $currentItemMsg.="\n种子链接:\n$TorrentEncode_result";
                             if($itemNum<=$max_items){
-                            $torrent_list.="\n$TorrentEncode_result";}
+                                $torrent_list.="\n$TorrentEncode_result";}
                         }
 
                         break;
