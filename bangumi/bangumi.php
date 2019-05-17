@@ -275,7 +275,7 @@ switch ($low_msg[1]){
         if(1==strpos($low_msg, "nyaa")){
             $php.="/dmhy/dmhy_moe_search.php?";
             $para=explode(" ",$msg);
-            $size=cont($para);
+            $size=count($para);
             $keyword=$size>1?urlencode($para[1]):null;
             $max_items=$size>2?urlencode($para[2]):null;
             $php.="dmhymoe=0&dmhynyaa=1&keyword={$keyword}&max={$max_items}&";
