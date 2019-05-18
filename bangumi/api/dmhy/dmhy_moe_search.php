@@ -95,6 +95,9 @@ if($use_trans){
 $decode_keyword=urlencode($keyword);
 //msg
 $site=$dmhy_moe?'动漫花园':'萌番组';
+if($dmhy_nyaa){
+    $site = 'Nyaa';
+}
 $msg="资源来源:[{$site}]\n关键字:[{$keyword}]\n";
 $fail_msg='没有相关结果...';
 $need_reply=true;
@@ -174,11 +177,14 @@ if($xml=simplexml_load_string($rss_file)){
                         if (!$dmhy_nyaa) {
                             $currentItemMsg.="\nURL:\n$item";
                         }else{
-                            $TorrentEncode_result=\dmhy\TorrentEncode($item->attributes());
+                            $TorrentEncode_result=\dmhy\TorrentEncode($item);
                             $currentItemMsg.="\n种子链接:\n$TorrentEncode_result";
                             if($itemNum<=$max_items){
                                 $torrent_list.="\n$TorrentEncode_result";}
                         }
+                        break;
+                    case "guid":
+                        $currentItemMsg.="\nURL:\n$item";
                         break;
                     case "pubDate":
                         //第一个item最新
